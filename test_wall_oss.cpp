@@ -77,6 +77,7 @@ int __cdecl main()
    
    int run_token    = 648;
    int last_token   = 0;
+   int hidden_dim   = 1280;
    int kvcache_mode = (run_token-last_token == 1)? 1 : 0;
 
 //    test_load_block00_weights(h2cx_device[0], "BLOCK_write_data_qwen3");
@@ -85,13 +86,13 @@ int __cdecl main()
 //    // ******************************** STEP1 - LN0 ******************************** //
    // Parameter Config
    struct FPGA_HBM_LN_cfg cfg_ln0 = GetFPGA_HBM_LN_cfg(
-      /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 1280,
-      /*DAT_IN_BASE_ADDR*/ runtime0, /*LN_WT_BASE_ADDR*/ hbm0, /*DAT_OUT_BASE_ADDR*/ runtime1
+      /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ hidden_dim,
+      /*DAT_IN_BASE_ADDR*/ runtime1, /*LN_WT_BASE_ADDR*/ hbm2, /*DAT_OUT_BASE_ADDR*/ runtime0
    );
    // Input bin_inf
-   struct bin_inf* ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*1280,  "./wall_oss/blocks_0/02_RMSNORM_visual_blocks_0_norm1/input.bin");
-   struct bin_inf* ln0_weight_bin_inf   = get_bin_inf(0, 1*1280,            "./wall_oss/blocks_0/02_RMSNORM_visual_blocks_0_norm1/weight.bin");
-   struct bin_inf* ln0_bias_bin_inf     = get_bin_inf(0, 1280,              "./rw_data/bn_and_k_bias_0.bin");
+   struct bin_inf* ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/blocks_0/02_RMSNORM_visual_blocks_0_norm1/input.bin");
+   struct bin_inf* ln0_weight_bin_inf   = get_bin_inf(0, 1*hidden_dim,            "./wall_oss/blocks_0/02_RMSNORM_visual_blocks_0_norm1/weight.bin");
+   struct bin_inf* ln0_bias_bin_inf     = get_bin_inf(0, hidden_dim,              "./rw_data/bn_and_k_bias_0.bin");
    // Output bin_inf
    struct bin_inf* *ln0_dat_in_HBM_inf         = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
    struct bin_inf* *ln0_ln_wt_and_bias_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
@@ -107,7 +108,7 @@ int __cdecl main()
    norm_step_2(user_device, run_token);
 
    // Read output data from FPGA and compare
-   struct bin_inf* ln0_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/02_RMSNORM_visual_blocks_0_norm1/output.bin");
+   struct bin_inf* ln0_golden_out_bin_inf = get_bin_inf(0, run_token*1*hidden_dim, "./wall_oss/blocks_0/02_RMSNORM_visual_blocks_0_norm1/output.bin");
    HBM_ln_receive_and_compare(cfg_ln0, c2hx_device[0], "wall_oss_run/blocks_0", "LN0", ln0_golden_out_bin_inf);
 
    // Malloc free
