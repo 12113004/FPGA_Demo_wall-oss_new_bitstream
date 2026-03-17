@@ -32,11 +32,10 @@ using namespace std;
 // step switch
 
 // #define STEP_LN0
-#define STEP_MVMBN0_Q
+// #define STEP_MVMBN0_Q
 // #define STEP_EMBQ
-// #define STEP_MVMBN0_K
-// #define STEP_LNK
-// #define STEP_EMBK
+#define STEP_MVMBN0_K
+#define STEP_EMBK
 // #define STEP_KV2HBMK_K
 // #define STEP_TRP
 // #define STEP_SOFTMAX
@@ -254,7 +253,7 @@ int __cdecl main()
    // ******************************** STEP7 - EMBK ******************************** //
    // Parameter Config
    struct FPGA_HBM_EMB_cfg cfg_embk = GetFPGA_HBM_EMB_cfg(
-       /*Head*/ 1, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 128*16, /*MAX_TOKEN*/ 2048, 
+       /*Head*/ 16, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 128, /*MAX_TOKEN*/ 2048, 
        /*DAT_IN_BASE_ADDR*/ runtime1, /*POS_IN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime3
    );
 
@@ -269,8 +268,8 @@ int __cdecl main()
    HBM_emb_test(cfg_embk, "wall_oss_run/blocks_0", "EMBK", embk_dat_in_bin_inf, embk_pos_in_bin_inf, embk_dat_in_HBM_inf, ENABLE, embk_pos_in_HBM_inf, ENABLE);
 
    // Write data to FPGA
-   HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embk_dat_in_HBM_inf, group);
    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embk_pos_in_HBM_inf, group);
+//    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embk_dat_in_HBM_inf, group);
 
    // Write command to FPGA
    rope_step_6(user_device, run_token, last_token);
