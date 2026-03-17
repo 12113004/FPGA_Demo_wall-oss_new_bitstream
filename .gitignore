@@ -1,0 +1,12 @@
+/BLOCK*
+/bin
+/.claude
+/qwen*
+/rw_data*
+*.log
+/tmp_data
+*.py
+*.bin
+/.vscode
+/random_test
+/Embbedding_data

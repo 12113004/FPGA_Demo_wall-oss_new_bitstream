@@ -1,0 +1,43 @@
+# vsim -c -L work testbench_ElementWise -do "run -all; quit" 
+# Start time: 18:14:17 on Apr 24,2024
+# ** Note: (vsim-8009) Loading existing optimized design _opt
+# 
+# //  ModelSim SE-64 10.4 Dec  3 2014 
+# //
+# //  Copyright 1991-2014 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# Loading sv_std.std
+# Loading work.testbench_ElementWise(fast)
+# run -all
+# RunElementwise_soft Finish
+# csb_rtl.append([1, 130, 0])
+# csb_rtl.append([1, 131, 0])
+# csb_rtl.append([1, 132, 1088])
+# csb_rtl.append([1, 133, 1088])
+# csb_rtl.append([1, 134, 134217728])
+# csb_rtl.append([1, 135, 1088])
+# csb_rtl.append([1, 136, 1088])
+# csb_rtl.append([1, 137, 128])
+# csb_rtl.append([1, 138, 1])
+# csb_rtl.append([1, 139, 17])
+# csb_rtl.append([1, 140, 16777216])
+# csb_rtl.append([1, 141, 0])
+# csb_rtl.append([1, 142, 1])
+# Elementwise_start!
+# csb_rtl.append([0, 129, 1])
+# Elementwise_wdma done!
+# RunElementwise_hardware Finish
+# ** Note: $finish    : testbench_ElementWise.sv(85)
+#    Time: 40 ns  Iteration: 0  Instance: /testbench_ElementWise
+# End time: 18:14:18 on Apr 24,2024, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
