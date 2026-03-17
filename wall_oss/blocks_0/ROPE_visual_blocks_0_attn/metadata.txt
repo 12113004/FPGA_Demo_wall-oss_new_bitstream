@@ -1,0 +1,9 @@
+layer: visual_blocks_0.attn
+use_padding: True
+q_input_shape: [648, 16, 128]
+k_input_shape: [648, 16, 128]
+q_output_shape: [648, 16, 128]
+k_output_shape: [648, 16, 128]
+cos_shape: [648, 80]
+sin_shape: [648, 80]
+cos_sin_shape: [seq_len, 128] (bytes, FP16)
