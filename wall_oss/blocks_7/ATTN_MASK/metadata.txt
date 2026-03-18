@@ -1,3 +1,0 @@
-input_shape: [16, 648, 648]
-mask_shape: [1, 648, 648]
-output_shape: [16, 648, 648]

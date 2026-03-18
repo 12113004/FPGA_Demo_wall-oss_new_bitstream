@@ -33,9 +33,9 @@ using namespace std;
 
 // #define STEP_LN0
 // #define STEP_MVMBN0_Q
-// #define STEP_EMBQ
-#define STEP_MVMBN0_K
-#define STEP_EMBK
+#define STEP_EMBQ
+// #define STEP_MVMBN0_K
+// #define STEP_EMBK
 // #define STEP_KV2HBMK_K
 // #define STEP_TRP
 // #define STEP_SOFTMAX
@@ -171,30 +171,30 @@ int __cdecl main()
    // ******************************** STEP4 - EMBQ ******************************** //
    // Parameter Config
    struct FPGA_HBM_EMB_cfg cfg_embq = GetFPGA_HBM_EMB_cfg(
-       /*Head*/ 32, /*Height*/ 22, /*Hin*/ 1, /*Width_in*/ 128, /*MAX_TOKEN*/ 2048, 
-       /*DAT_IN_BASE_ADDR*/ runtime3, /*POS_IN_BASE_ADDR*/ hbm4, /*DAT_OUT_BASE_ADDR*/ runtime2
+       /*Head*/ 16*4, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 128, /*MAX_TOKEN*/ 2048, 
+       /*DAT_IN_BASE_ADDR*/ runtime1, /*POS_IN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime2
    );
 
    // Input bin_inf
-   struct bin_inf* embq_dat_in_bin_inf = get_bin_inf(0, 22*32*128, "./qwen3_data/Qwen3_xiao/test_q_rope_xiao/q_rope_input.bin");
-   struct bin_inf* embq_pos_in_bin_inf = get_bin_inf(0, 2048*128, "./qwen3_data/Qwen3_xiao/ROPE_max_token2048_pos_data.bin");
+   struct bin_inf* embq_dat_in_bin_inf = get_bin_inf(0, run_token*4*16*128,     "./wall_oss/blocks_0/ROPE_visual_blocks_0_attn/q_input.bin");
+   struct bin_inf* embq_pos_in_bin_inf = get_bin_inf(0, 2048*128,               "./wall_oss/blocks_0/ROPE_visual_blocks_0_attn/cos_sin.bin"); 
    // Output bin_inf
    struct bin_inf* *embq_dat_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
    struct bin_inf* *embq_pos_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
    // Transform data
-   HBM_emb_test(cfg_embq, "BLOCK_write_data/BLOCK00", "EMBQ", embq_dat_in_bin_inf, embq_pos_in_bin_inf, embq_dat_in_HBM_inf, ENABLE, embq_pos_in_HBM_inf, ENABLE);
+   HBM_emb_test(cfg_embq, "wall_oss_run/blocks_0", "EMBQ", embq_dat_in_bin_inf, embq_pos_in_bin_inf, embq_dat_in_HBM_inf, ENABLE, embq_pos_in_HBM_inf, ENABLE);
 
    // Write data to FPGA
-   // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embq_dat_in_HBM_inf, group);
+   HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embq_dat_in_HBM_inf, group);
    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embq_pos_in_HBM_inf, group);
 
    // Write command to FPGA
    rope_step_4(user_device, run_token, last_token);
 
    // Read output data from FPGA and compare
-   struct bin_inf* embq_golden_out_bin_inf = get_bin_inf(0, 0, "./qwen3_data/Qwen3_xiao/test_q_rope_xiao/q_rope_output.bin");
-   // HBM_emb_receive_and_compare(cfg_embq, c2hx_device[0], "BLOCK_read_data", "EMBQ", embq_golden_out_bin_inf);
+   struct bin_inf* embq_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/ROPE_visual_blocks_0_attn/q_output.bin"); 
+   HBM_emb_receive_and_compare(cfg_embq, c2hx_device[0], "wall_oss_run/blocks_0", "EMBQ", embq_golden_out_bin_inf);
 
    // Malloc free
    bin_inf_malloc_free(embq_dat_in_bin_inf);
@@ -268,8 +268,8 @@ int __cdecl main()
    HBM_emb_test(cfg_embk, "wall_oss_run/blocks_0", "EMBK", embk_dat_in_bin_inf, embk_pos_in_bin_inf, embk_dat_in_HBM_inf, ENABLE, embk_pos_in_HBM_inf, ENABLE);
 
    // Write data to FPGA
+   HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embk_dat_in_HBM_inf, group);
    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embk_pos_in_HBM_inf, group);
-//    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], embk_dat_in_HBM_inf, group);
 
    // Write command to FPGA
    rope_step_6(user_device, run_token, last_token);
