@@ -13,7 +13,8 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0317_1602.h"
 // #include "./rw_cmd/wall_oss_debug_0320_1810.h"
 // #include "./rw_cmd/wall_oss_debug_0321_1359.h"
-#include "./rw_cmd/wall_oss_debug_0321_1447.h"
+// #include "./rw_cmd/wall_oss_debug_0321_1447.h"
+#include "./rw_cmd/wall_oss_debug_0321_1724.h"
 
 
 // Tests
@@ -42,7 +43,7 @@ using namespace std;
 #define STEP_KV2HBMK_K
 #define STEP_TRP
 #define STEP_MASK
-// #define STEP_SOFTMAX
+#define STEP_SOFTMAX
 // #define STEP_MVMBN0_V
 // #define STEP_KV2HBM_V
 // #define STEP_F2W
@@ -400,35 +401,35 @@ int __cdecl main()
 #endif
 
 #ifdef STEP_SOFTMAX
-   // ******************************** STEP10 - SOFTMAX ******************************** //
-   // Parameter Config
-   struct FPGA_HBM_SOFTMAX_cfg cfg_softmax = GetFPGA_HBM_SOFTMAX_cfg(
-       /*Head*/ 16, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ run_token,
-       /*DAT_IN_BASE_ADDR*/ runtime2, /*DAT_OUT_BASE_ADDR*/ runtime1
-   );
+    // ******************************** STEP10 - SOFTMAX ******************************** //
+    // Parameter Config
+    struct FPGA_HBM_SOFTMAX_cfg cfg_softmax = GetFPGA_HBM_SOFTMAX_cfg(
+        /*Head*/ 16, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ run_token,
+        /*DAT_IN_BASE_ADDR*/ runtime2, /*DAT_OUT_BASE_ADDR*/ runtime1
+    );
 
-   // Input bin_inf
-   struct bin_inf* softmax_dat_in_bin_inf = get_bin_inf(0, 16*run_token*run_token, "./wall_oss/blocks_0/SOFTMAX/input.bin");
-   // Output bin_inf
-   struct bin_inf* *softmax_dat_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // Input bin_inf
+    struct bin_inf* softmax_dat_in_bin_inf = get_bin_inf(0, 16*run_token*run_token, "./wall_oss/blocks_0/SOFTMAX/input.bin");
+    // Output bin_inf
+    struct bin_inf* *softmax_dat_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
-   // Transform data
-   HBM_softmax_test(cfg_softmax , "wall_oss_run/blocks_0", "SOFTMAX", softmax_dat_in_bin_inf, softmax_dat_in_HBM_inf, ENABLE);
+    // Transform data
+    HBM_softmax_test(cfg_softmax , "wall_oss_run/blocks_0", "SOFTMAX", softmax_dat_in_bin_inf, softmax_dat_in_HBM_inf, ENABLE);
 
-   // Write data to FPGA
-//    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], softmax_dat_in_HBM_inf, group);
+    // Write data to FPGA
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], softmax_dat_in_HBM_inf, group);
 
-   // Write command to FPGA
-   softmax_step_10(user_device, run_token, last_token);
+    // Write command to FPGA
+    softmax_step_10(user_device, run_token, last_token);
 
-   // Read output data from FPGA and compare
-   struct bin_inf* softmax_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/SOFTMAX/output.bin");
-   HBM_softmax_receive_and_compare(cfg_softmax, c2hx_device[0], "wall_oss_run/blocks_0", "SOFTMAX", softmax_golden_out_bin_inf);
+    // Read output data from FPGA and compare
+    struct bin_inf* softmax_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/SOFTMAX/output.bin");
+    HBM_softmax_receive_and_compare(cfg_softmax, c2hx_device[0], "wall_oss_run/blocks_0", "SOFTMAX", softmax_golden_out_bin_inf);
 
-   // Malloc free
-   bin_inf_malloc_free(softmax_dat_in_bin_inf);
-   bin_inf_malloc_free(softmax_golden_out_bin_inf);
-   HBM_bin_inf_malloc_free(softmax_dat_in_HBM_inf, group);
+    // Malloc free
+    bin_inf_malloc_free(softmax_dat_in_bin_inf);
+    bin_inf_malloc_free(softmax_golden_out_bin_inf);
+    HBM_bin_inf_malloc_free(softmax_dat_in_HBM_inf, group);
 #endif
 
 #ifdef STEP_MVMBN0_V
