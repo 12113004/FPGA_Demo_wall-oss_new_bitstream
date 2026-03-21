@@ -429,6 +429,7 @@ void CSB_Write(HANDLE user_device, int addr, int data)
     // //     fprintf(stderr, "WriteFile to device %s failed with Win32 error code: %d\n","user_device_path", GetLastError());
     // //     CloseHandle(user_device);
     // // }
+    printf("CSB_Write(%d, %d)\n", addr, data);
 }
 
 void CSB_Write_fprintf(FILE *aux_test, HANDLE user_device, int addr, int data)
