@@ -12,7 +12,8 @@ using namespace std;
 // #include "./rw_cmd/qwen3_block_ohbm_test_1124_1554.h"
 // #include "./rw_cmd/wall_oss_debug_0317_1602.h"
 // #include "./rw_cmd/wall_oss_debug_0320_1810.h"
-#include "./rw_cmd/wall_oss_debug_0321_1359.h"
+// #include "./rw_cmd/wall_oss_debug_0321_1359.h"
+#include "./rw_cmd/wall_oss_debug_0321_1447.h"
 
 
 // Tests
@@ -347,13 +348,13 @@ int __cdecl main()
     mvm_f16xf16_step_8(user_device, run_token, last_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* trp_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/TRP/attn_weights.bin");
-    HBM_trp_receive_and_compare(cfg_trp, c2hx_device[0], "wall_oss_run/blocks_0", "TRP", trp_golden_out_bin_inf);
+    // struct bin_inf* trp_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/TRP/attn_weights.bin");
+    // HBM_trp_receive_and_compare(cfg_trp, c2hx_device[0], "wall_oss_run/blocks_0", "TRP", trp_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(trp_dat_in_bin_inf);
     bin_inf_malloc_free(trp_wt_in_bin_inf);
-    bin_inf_malloc_free(trp_golden_out_bin_inf );
+    // bin_inf_malloc_free(trp_golden_out_bin_inf );
     HBM_bin_inf_malloc_free(trp_dat_in_HBM_inf, group);
     HBM_bin_inf_malloc_free(trp_wt_in_HBM_inf, group);
 #endif
@@ -382,7 +383,8 @@ int __cdecl main()
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise0_dat_in_B_HBM_inf, group);
 
     // Write command to FPGA
-    elementwise_step_9(user_device, run_token, last_token);
+    elementwise_step_9(user_device);
+    // elementwise_step_9(user_device, run_token, last_token);
 
     // Read output data from FPGA and compare
     struct bin_inf* elementwise0_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/ATTN_MASK/output.bin");
@@ -401,27 +403,27 @@ int __cdecl main()
    // ******************************** STEP10 - SOFTMAX ******************************** //
    // Parameter Config
    struct FPGA_HBM_SOFTMAX_cfg cfg_softmax = GetFPGA_HBM_SOFTMAX_cfg(
-       /*Head*/ 32, /*Height*/ 22, /*Hin*/ 1, /*Width_in*/ 22,
-       /*DAT_IN_BASE_ADDR*/ runtime3, /*DAT_OUT_BASE_ADDR*/ runtime2
+       /*Head*/ 16, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ run_token,
+       /*DAT_IN_BASE_ADDR*/ runtime2, /*DAT_OUT_BASE_ADDR*/ runtime1
    );
 
    // Input bin_inf
-   struct bin_inf* softmax_dat_in_bin_inf = get_bin_inf(0, 32*22*32, "./qwen3_data/Qwen3_xiao/test_Softmax/Softmax_in.bin");
+   struct bin_inf* softmax_dat_in_bin_inf = get_bin_inf(0, 16*run_token*run_token, "./wall_oss/blocks_0/SOFTMAX/input.bin");
    // Output bin_inf
    struct bin_inf* *softmax_dat_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
    // Transform data
-   HBM_softmax_test(cfg_softmax , "BLOCK_write_data/BLOCK00", "SOFTMAX_test", softmax_dat_in_bin_inf, softmax_dat_in_HBM_inf, ENABLE);
+   HBM_softmax_test(cfg_softmax , "wall_oss_run/blocks_0", "SOFTMAX", softmax_dat_in_bin_inf, softmax_dat_in_HBM_inf, ENABLE);
 
    // Write data to FPGA
-   // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], softmax_dat_in_HBM_inf, group);
+//    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], softmax_dat_in_HBM_inf, group);
 
    // Write command to FPGA
    softmax_step_10(user_device, run_token, last_token);
 
    // Read output data from FPGA and compare
-   struct bin_inf* softmax_golden_out_bin_inf = get_bin_inf(0, 0, "./qwen3_data/Qwen3_xiao/test_Softmax/Softmax_out.bin");
-   // HBM_softmax_receive_and_compare(cfg_softmax, c2hx_device[0], "BLOCK_read_data", "SOFTMAX", softmax_golden_out_bin_inf);
+   struct bin_inf* softmax_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/SOFTMAX/output.bin");
+   HBM_softmax_receive_and_compare(cfg_softmax, c2hx_device[0], "wall_oss_run/blocks_0", "SOFTMAX", softmax_golden_out_bin_inf);
 
    // Malloc free
    bin_inf_malloc_free(softmax_dat_in_bin_inf);
