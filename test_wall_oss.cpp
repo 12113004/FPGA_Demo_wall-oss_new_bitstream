@@ -14,10 +14,10 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0320_1810.h"
 // #include "./rw_cmd/wall_oss_debug_0321_1359.h"
 // #include "./rw_cmd/wall_oss_debug_0321_1447.h"
-#include "./rw_cmd/wall_oss_debug_0321_1724.h"
+// #include "./rw_cmd/wall_oss_debug_0321_1724.h"                      // ATTEN_DONE
 // #include "./rw_cmd/wall_oss_debug_0322_1429.h"                      // working with O input head = 16
-// #include "./rw_cmd/wall_oss_debug_0322_1602.h"
-
+// #include "./rw_cmd/wall_oss_debug_0322_1602.h"                      // MLP
+#include "./rw_cmd/wall_oss_debug_0322_2204.h" 
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
@@ -130,7 +130,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn0_q = GetFPGA_HBM_MVM_BN_cfg(
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ hidden_dim, /*Width_out*/ 4*16*128,
-        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm3, /*BN_BASE_ADDR*/ hbm4, /*DAT_OUT_BASE_ADDR*/ runtime1
+        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm3, /*BN_BASE_ADDR*/ hbm4, /*DAT_OUT_BASE_ADDR*/ runtime2
     );
 
     // Input bin_inf
@@ -179,7 +179,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_EMB_cfg cfg_embq = GetFPGA_HBM_EMB_cfg(
         /*Head*/ 16*4, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 128, /*MAX_TOKEN*/ 2048, 
-        /*DAT_IN_BASE_ADDR*/ runtime1, /*POS_IN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime2
+        /*DAT_IN_BASE_ADDR*/ runtime2, /*POS_IN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime3
     );
 
     // Input bin_inf
@@ -216,7 +216,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn0_k = GetFPGA_HBM_MVM_BN_cfg(
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ hidden_dim, /*Width_out*/ 16*128,
-        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm6, /*BN_BASE_ADDR*/ hbm7, /*DAT_OUT_BASE_ADDR*/ runtime1
+        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm6, /*BN_BASE_ADDR*/ hbm7, /*DAT_OUT_BASE_ADDR*/ runtime2
     );
     // Input bin_inf
     struct bin_inf* mvmbn0_k_dat_in_bin_inf = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/blocks_0/04_LINEAR_visual_blocks_0_attn_qkv_k_proj/input.bin");
@@ -261,7 +261,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_EMB_cfg cfg_embk = GetFPGA_HBM_EMB_cfg(
         /*Head*/ 16, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 128, /*MAX_TOKEN*/ 2048, 
-        /*DAT_IN_BASE_ADDR*/ runtime1, /*POS_IN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime3
+        /*DAT_IN_BASE_ADDR*/ runtime2, /*POS_IN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime4
     );
 
     // Input bin_inf
@@ -298,7 +298,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_KV2HBM_cfg cfg_kv2hbmk = GetFPGA_HBM_KV2HBM_cfg(
         /*This_Token*/ run_token, /*Last_Token*/ last_token, /*Weight_Head*/ 16, /*MAX_CH_per_HEAD*/ 128, /*MAX_TOKEN*/ 2048, 
-        /*DAT_IN_BASE_ADDR*/ runtime3, /*DAT_OUT_BASE_ADDR*/ hbm_cache0
+        /*DAT_IN_BASE_ADDR*/ runtime4, /*DAT_OUT_BASE_ADDR*/ hbm_cache0
     );
 
     // Input bin_inf
@@ -330,7 +330,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_TRP_cfg cfg_trp = GetFPGA_HBM_TRP_cfg(
         /*This_Token*/ run_token, /*Last_Token*/ last_token, /*Original_Feature_Head*/ 16*4, /*Weight_Head*/ 16, /*MAX_CH_per_HEAD*/ 128, /*MAX_TOKEN*/ 2048, 
-        /*DAT_IN_BASE_ADDR*/ runtime2, /*WT_BASE_ADDR*/ hbm_cache0, /*DAT_OUT_BASE_ADDR*/ runtime1
+        /*DAT_IN_BASE_ADDR*/ runtime3, /*WT_BASE_ADDR*/ hbm_cache0, /*DAT_OUT_BASE_ADDR*/ runtime2
     );
 
     // Input bin_inf
@@ -367,7 +367,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_ELEMENTWISE_cfg cfg_elementwise0 = GetFPGA_HBM_ELEMENTWISE_cfg(
         /*Height*/ 16*run_token*((run_token-1)/512+1), /*Hin*/ 1, /*Width_in*/ 512,
-        /*DAT_IN_A_BASE_ADDR*/ runtime1, /*DAT_IN_B_BASE_ADDR*/ hbm8, /*DAT_OUT_BASE_ADDR*/ runtime2 
+        /*DAT_IN_A_BASE_ADDR*/ runtime2, /*DAT_IN_B_BASE_ADDR*/ hbm8, /*DAT_OUT_BASE_ADDR*/ runtime3 
     );
     
     // Input bin_inf
@@ -406,7 +406,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_SOFTMAX_cfg cfg_softmax = GetFPGA_HBM_SOFTMAX_cfg(
         /*Head*/ 16, /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ run_token,
-        /*DAT_IN_BASE_ADDR*/ runtime2, /*DAT_OUT_BASE_ADDR*/ runtime1
+        /*DAT_IN_BASE_ADDR*/ runtime3, /*DAT_OUT_BASE_ADDR*/ runtime2
     );
 
     // Input bin_inf
@@ -438,7 +438,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn0_v = GetFPGA_HBM_MVM_BN_cfg(
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ hidden_dim, /*Width_out*/ 16*128,
-        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm9, /*BN_BASE_ADDR*/ hbm10, /*DAT_OUT_BASE_ADDR*/ runtime3
+        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm9, /*BN_BASE_ADDR*/ hbm10, /*DAT_OUT_BASE_ADDR*/ runtime4
     );
     // Input bin_inf
     struct bin_inf* mvmbn0_v_dat_in_bin_inf = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/blocks_0/04_LINEAR_visual_blocks_0_attn_qkv_v_proj/input.bin");
@@ -483,7 +483,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_KV2HBM_cfg cfg_kv2hbmv = GetFPGA_HBM_KV2HBM_cfg(
         /*This_Token*/ run_token, /*Last_Token*/ last_token, /*Weight_Head*/ 8, /*MAX_CH_per_HEAD*/ 128, /*MAX_TOKEN*/ 2048, 
-        /*DAT_IN_BASE_ADDR*/ runtime3, /*DAT_OUT_BASE_ADDR*/ hbm_cache1
+        /*DAT_IN_BASE_ADDR*/ runtime4, /*DAT_OUT_BASE_ADDR*/ hbm_cache1
     );
 
     // Input bin_inf
@@ -515,7 +515,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_F2W_cfg cfg_f2w = GetFPGA_HBM_F2W_cfg(
         /*This_Token*/ run_token, /*Last_Token*/ last_token, /*Original_Feature_Head*/ 16, /*Weight_Head*/ 16, /*MAX_CH_per_HEAD*/ 128, /*MAX_TOKEN*/ 2048, 
-        /*DAT_IN_BASE_ADDR*/ runtime1, /*WT_BASE_ADDR*/ hbm_cache1, /*DAT_OUT_BASE_ADDR*/ runtime2
+        /*DAT_IN_BASE_ADDR*/ runtime2, /*WT_BASE_ADDR*/ hbm_cache1, /*DAT_OUT_BASE_ADDR*/ runtime3
     );
 
     // Input bin_inf
@@ -552,7 +552,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn1 = GetFPGA_HBM_MVM_BN_cfg(
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 16*4*128, /*Width_out*/ 1280,
-        /*DAT_IN_BASE_ADDR*/ runtime2, /*HBM00_WT_BASE_ADDR*/ hbm11, /*BN_BASE_ADDR*/ hbm12, /*DAT_OUT_BASE_ADDR*/ runtime0
+        /*DAT_IN_BASE_ADDR*/ runtime3, /*HBM00_WT_BASE_ADDR*/ hbm11, /*BN_BASE_ADDR*/ hbm12, /*DAT_OUT_BASE_ADDR*/ runtime0
     );
 
     // Input bin_inf
