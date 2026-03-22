@@ -53,7 +53,7 @@ using namespace std;
 #define STEP_ELEMENTWISE0
 
 #define STEP_LN1
-// #define STEP_MVMBN2
+#define STEP_MVMBN2
 // #define STEP_ACT
 // #define STEP_MVMBN3
 // #define STEP_ELEMENTWISE1
@@ -674,7 +674,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn2 = GetFPGA_HBM_MVM_BN_cfg(
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 1280, /*Width_out*/ 3420,
-        /*DAT_IN_BASE_ADDR*/ runtime1, /*HBM00_WT_BASE_ADDR*/ hbm14, /*BN_BASE_ADDR*/ hbm15, /*DAT_OUT_BASE_ADDR*/ runtime2
+        /*DAT_IN_BASE_ADDR*/ runtime1, /*HBM00_WT_BASE_ADDR*/ hbm14, /*BN_BASE_ADDR*/ hbm15, /*DAT_OUT_BASE_ADDR*/ runtime3
     );
 
     // Input bin_inf
@@ -693,7 +693,7 @@ int __cdecl main()
                     mvmbn2_wt_and_scale_in_HBM_inf, ENABLE, mvmbn2_dat_in_HBM_inf, ENABLE, mvmbn2_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_wt_and_scale_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_bn_wt_and_bias_in_HBM_inf, group);
 
