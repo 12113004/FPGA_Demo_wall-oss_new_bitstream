@@ -58,7 +58,7 @@ using namespace std;
 #define STEP_MVMBN3
 #define STEP_ELEMENTWISE1
 #define STEP_MVMBN4
-// #define STEP_ELEMENTWISE2
+#define STEP_ELEMENTWISE2
 // #define STEP_LN_Outlayer
 // #define STEP_MVMBN_Argmax
 // #define test_BLOCK00
@@ -883,40 +883,40 @@ int __cdecl main()
 #endif 
 
 #ifdef STEP_ELEMENTWISE2
-   // ******************************** STEP22 ELEMENTWISE2 ******************************** //
-   // Parameter Config
-   struct FPGA_HBM_ELEMENTWISE_cfg cfg_elementwise2 = GetFPGA_HBM_ELEMENTWISE_cfg(
-       /*Height*/ 22, /*Hin*/ 1, /*Width_in*/ 4096,
-       /*DAT_IN_A_BASE_ADDR*/ runtime2, /*DAT_IN_B_BASE_ADDR*/ runtime1, /*DAT_OUT_BASE_ADDR*/ runtime0
-   );
+    // ******************************** STEP22 ELEMENTWISE2 ******************************** //
+    // Parameter Config
+    struct FPGA_HBM_ELEMENTWISE_cfg cfg_elementwise2 = GetFPGA_HBM_ELEMENTWISE_cfg(
+        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 1280,
+        /*DAT_IN_A_BASE_ADDR*/ runtime0, /*DAT_IN_B_BASE_ADDR*/ runtime4, /*DAT_OUT_BASE_ADDR*/ runtime1
+    );
 
-   // Input bin_inf
-   struct bin_inf* elementwise2_dat_in_A_bin_inf  = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/ELEMENTWISE2_input.bin");
-   struct bin_inf* elementwise2_dat_in_B_bin_inf  = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/residual.bin");
-   // Output bin_inf
-   struct bin_inf* *elementwise2_dat_in_A_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-   struct bin_inf* *elementwise2_dat_in_B_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // // Input bin_inf
+    // struct bin_inf* elementwise2_dat_in_A_bin_inf  = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/ELEMENTWISE2_input.bin");
+    // struct bin_inf* elementwise2_dat_in_B_bin_inf  = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/residual.bin");
+    // // Output bin_inf
+    // struct bin_inf* *elementwise2_dat_in_A_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // struct bin_inf* *elementwise2_dat_in_B_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
-   // Transform data
-   HBM_elementwise_test(cfg_elementwise2, "BLOCK_write_data/BLOCK00", "ELEMENTWISE2", elementwise2_dat_in_A_bin_inf, elementwise2_dat_in_B_bin_inf, elementwise2_dat_in_A_HBM_inf, ENABLE, elementwise2_dat_in_B_HBM_inf, ENABLE);
+    // // Transform data
+    // HBM_elementwise_test(cfg_elementwise2, "BLOCK_write_data/BLOCK00", "ELEMENTWISE2", elementwise2_dat_in_A_bin_inf, elementwise2_dat_in_B_bin_inf, elementwise2_dat_in_A_HBM_inf, ENABLE, elementwise2_dat_in_B_HBM_inf, ENABLE);
 
-   // Write data to FPGA
-   // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_A_HBM_inf, group);
-   // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_B_HBM_inf, group);
+    // Write data to FPGA
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_A_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_B_HBM_inf, group);
 
-   // Write command to FPGA
-   elementwise_step_22(user_device, run_token);
+    // Write command to FPGA
+    elementwise_step_22(user_device, run_token);
 
-   // Read output data from FPGA and compare
-   struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/ELEMENTWISE2_output.bin");
-   HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "BLOCK_read_data", "ELEMENTWISE2", elementwise2_golden_out_bin_inf);
+    // Read output data from FPGA and compare
+    struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         "./wall_oss/blocks_1/09_RMSNORM_visual_blocks_1_norm1/input.bin");
+    HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "wall_oss_run/blocks_0", "ELEMENTWISE2", elementwise2_golden_out_bin_inf);
 
-   // Malloc free
-   bin_inf_malloc_free(elementwise2_dat_in_A_bin_inf);
-   bin_inf_malloc_free(elementwise2_dat_in_B_bin_inf);
-   bin_inf_malloc_free(elementwise2_golden_out_bin_inf);
-   HBM_bin_inf_malloc_free(elementwise2_dat_in_A_HBM_inf, group);
-   HBM_bin_inf_malloc_free(elementwise2_dat_in_B_HBM_inf, group);
+    // Malloc free
+    // bin_inf_malloc_free(elementwise2_dat_in_A_bin_inf);
+    // bin_inf_malloc_free(elementwise2_dat_in_B_bin_inf);
+    bin_inf_malloc_free(elementwise2_golden_out_bin_inf);
+    // HBM_bin_inf_malloc_free(elementwise2_dat_in_A_HBM_inf, group);
+    // HBM_bin_inf_malloc_free(elementwise2_dat_in_B_HBM_inf, group);
 #endif 
 
 #ifdef STEP_LN_Outlayer
