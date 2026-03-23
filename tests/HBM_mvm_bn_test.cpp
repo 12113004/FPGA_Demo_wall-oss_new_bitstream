@@ -58,15 +58,24 @@ void HBM_mvmbn_test(struct FPGA_HBM_MVM_BN_cfg cfg, char* path_name, char* head_
         if (bn_wt_and_bias_in_HBM[i] == NULL){perror("main");return;}
     }
     
-    // for(int i=0;i<cfg.CHout*cfg.CHin;i++)
-    //    if(i<4096) wt[i] = 1;
+    // for(int i=0;i<cfg.CHout;i++)
+    // {
+    //     for(int j=0;j<cfg.CHin;j++)
+    //     {
+    //         if(i<5)
+    //             wt[i*cfg.CHin+j] = 1;
+    //         else
+    //             wt[i*cfg.CHin+j] = 0;
+    //     }
+    // }
     // for(int i=0;i<cfg.CHout_div_Tout*cfg.WT_CHin_div_Tblock*Tout;i++)
-    //    if(i<32) wt_FP_scale[i] = 0x3c00;
-    //for(int j=0;j<cfg.Hin*cfg.Win*cfg.CHin;j++)
+    // //    if(i<32) wt_FP_scale[i] = 0x3c00;
+    //    wt_FP_scale[i] = 0x3c00;
+    // for(int j=0;j<cfg.Hin*cfg.Win*cfg.CHin;j++)
     //    dat_in[0][j] = 0x3c00;
-    //for(int i=0;i<cfg.CHout;i++)
+    // for(int i=0;i<cfg.CHout;i++)
     //    bn_wt[i] = 0x3c00;
-    //for(int i=0;i<cfg.CHout;i++)
+    // for(int i=0;i<cfg.CHout;i++)
     //    bn_bias[i] = 0x0000;
 
     if(en_0) WT_AND_SCALE_TRANS_FUNCTION_MVM_BN(cfg, wt, wt_FP_scale, wt_and_scale_in_HBM);
