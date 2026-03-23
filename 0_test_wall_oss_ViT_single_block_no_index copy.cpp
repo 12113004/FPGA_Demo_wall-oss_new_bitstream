@@ -17,8 +17,7 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0321_1724.h"                      // ATTEN_DONE
 // #include "./rw_cmd/wall_oss_debug_0322_1429.h"                      // working with O input head = 16
 // #include "./rw_cmd/wall_oss_debug_0322_1602.h"                      // MLP
-// #include "./rw_cmd/wall_oss_debug_0322_2204.h"                      // 0_test_pass_version
-#include "./rw_cmd/wall_oss_debug_0324_0005.h"                          
+#include "./rw_cmd/wall_oss_debug_0324_0005.h" 
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
@@ -39,26 +38,26 @@ using namespace std;
 // step switch
 
 #define STEP_LN0
-// #define STEP_MVMBN0_Q
-// #define STEP_EMBQ
-// #define STEP_MVMBN0_K
-// #define STEP_EMBK
-// #define STEP_KV2HBMK_K
-// #define STEP_TRP
-// #define STEP_MASK
-// #define STEP_SOFTMAX
-// #define STEP_MVMBN0_V
-// #define STEP_KV2HBM_V
-// #define STEP_F2W
-// #define STEP_MVMBN1
-// #define STEP_ELEMENTWISE0
+#define STEP_MVMBN0_Q
+#define STEP_EMBQ
+#define STEP_MVMBN0_K
+#define STEP_EMBK
+#define STEP_KV2HBMK_K
+#define STEP_TRP
+#define STEP_MASK
+#define STEP_SOFTMAX
+#define STEP_MVMBN0_V
+#define STEP_KV2HBM_V
+#define STEP_F2W
+#define STEP_MVMBN1
+#define STEP_ELEMENTWISE0
 
-// #define STEP_LN1
-// #define STEP_MVMBN2
-// #define STEP_ACT
-// #define STEP_MVMBN3
-// #define STEP_ELEMENTWISE1
-// #define STEP_MVMBN4
+#define STEP_LN1
+#define STEP_MVMBN2
+#define STEP_ACT
+#define STEP_MVMBN3
+#define STEP_ELEMENTWISE1
+#define STEP_MVMBN4
 #define STEP_ELEMENTWISE2
 // #define STEP_LN_Outlayer
 // #define STEP_MVMBN_Argmax
@@ -66,27 +65,27 @@ using namespace std;
 
 int __cdecl main()
 {
-    //****************************** open device ****************************// 
-    HANDLE user_device;
-    HANDLE bypass_device;
-    HANDLE c2hx_device[NUM_OF_RW_CH];
-    HANDLE h2cx_device[NUM_OF_RW_CH];   
-    open_device(&user_device, &bypass_device, &c2hx_device[0], &h2cx_device[0]);
-    //****************************** open device ****************************//
-    LARGE_INTEGER start_cfg;
-    LARGE_INTEGER stop_cfg;
-    LARGE_INTEGER start_run;
-    LARGE_INTEGER stop_run;
-    LARGE_INTEGER freq;
-    double time_sec0;
-    
-    
-    int run_token    = 648;
-    int last_token   = 0;
-    int hidden_dim   = 1280;
-    int kvcache_mode = (run_token-last_token == 1)? 1 : 0;
+   //****************************** open device ****************************// 
+   HANDLE user_device;
+   HANDLE bypass_device;
+   HANDLE c2hx_device[NUM_OF_RW_CH];
+   HANDLE h2cx_device[NUM_OF_RW_CH];   
+   open_device(&user_device, &bypass_device, &c2hx_device[0], &h2cx_device[0]);
+   //****************************** open device ****************************//
+   LARGE_INTEGER start_cfg;
+   LARGE_INTEGER stop_cfg;
+   LARGE_INTEGER start_run;
+   LARGE_INTEGER stop_run;
+   LARGE_INTEGER freq;
+   double time_sec0;
+   
+   
+   int run_token    = 648;
+   int last_token   = 0;
+   int hidden_dim   = 1280;
+   int kvcache_mode = (run_token-last_token == 1)? 1 : 0;
 
-    test_load_params(h2cx_device[0], ".");
+//    test_load_block00_weights(h2cx_device[0], "BLOCK_write_data_qwen3");
 
 #ifdef STEP_LN0
     // ******************************** STEP1 - LN0 ******************************** //
@@ -108,44 +107,22 @@ int __cdecl main()
 
     // Write data to FPGA
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln0_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln0_ln_wt_and_bias_HBM_inf, group);
 
-    test(user_device, run_token, last_token);
+    // Write command to FPGA
+    norm_step_2(user_device, run_token);
 
-    // // ******************************** STEP1 - LN0 ******************************** //
-    // // Parameter Config
-    // struct FPGA_HBM_LN_cfg cfg_ln0 = GetFPGA_HBM_LN_cfg(
-    //     /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ hidden_dim,
-    //     /*DAT_IN_BASE_ADDR*/ runtime1, /*LN_WT_BASE_ADDR*/ hbm2, /*DAT_OUT_BASE_ADDR*/ runtime0
-    // );
-    // // Input bin_inf
-    // struct bin_inf* ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/blocks_0/RMSNORM_visual_blocks_0_norm1/input.bin");
-    // struct bin_inf* ln0_weight_bin_inf   = get_bin_inf(0, 1*hidden_dim,            "./wall_oss/blocks_0/RMSNORM_visual_blocks_0_norm1/weight.bin");
-    // struct bin_inf* ln0_bias_bin_inf     = get_bin_inf(0, hidden_dim,              "./rw_data/bn_and_k_bias_0.bin");
-    // // Output bin_inf
-    // struct bin_inf* *ln0_dat_in_HBM_inf         = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    // struct bin_inf* *ln0_ln_wt_and_bias_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // Read output data from FPGA and compare
+    // struct bin_inf* ln0_golden_out_bin_inf = get_bin_inf(0, run_token*1*hidden_dim, "./wall_oss/blocks_0/RMSNORM_visual_blocks_0_norm1/output.bin");
+    // HBM_ln_receive_and_compare(cfg_ln0, c2hx_device[0], "wall_oss_run/blocks_0", "LN0", ln0_golden_out_bin_inf);
 
-    // // Transform data
-    // HBM_ln_test(cfg_ln0, "wall_oss_run/blocks_0", "LN0", ln0_dat_in_bin_inf, ln0_weight_bin_inf, ln0_bias_bin_inf, ln0_dat_in_HBM_inf, ENABLE, ln0_ln_wt_and_bias_HBM_inf, ENABLE);
-
-    // // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln0_dat_in_HBM_inf, group);
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln0_ln_wt_and_bias_HBM_inf, group);
-
-    // // Write command to FPGA
-    // norm_step_2(user_device, run_token);
-
-    // // Read output data from FPGA and compare
-    // // struct bin_inf* ln0_golden_out_bin_inf = get_bin_inf(0, run_token*1*hidden_dim, "./wall_oss/blocks_0/RMSNORM_visual_blocks_0_norm1/output.bin");
-    // // HBM_ln_receive_and_compare(cfg_ln0, c2hx_device[0], "wall_oss_run/blocks_0", "LN0", ln0_golden_out_bin_inf);
-
-    // // Malloc free
-    // bin_inf_malloc_free(ln0_dat_in_bin_inf);
-    // bin_inf_malloc_free(ln0_weight_bin_inf);
-    // bin_inf_malloc_free(ln0_bias_bin_inf);
-    // // bin_inf_malloc_free(ln0_golden_out_bin_inf );
-    // HBM_bin_inf_malloc_free(ln0_dat_in_HBM_inf, group);
-    // HBM_bin_inf_malloc_free(ln0_ln_wt_and_bias_HBM_inf, group); 
+    // Malloc free
+    bin_inf_malloc_free(ln0_dat_in_bin_inf);
+    bin_inf_malloc_free(ln0_weight_bin_inf);
+    bin_inf_malloc_free(ln0_bias_bin_inf);
+    // bin_inf_malloc_free(ln0_golden_out_bin_inf );
+    HBM_bin_inf_malloc_free(ln0_dat_in_HBM_inf, group);
+    HBM_bin_inf_malloc_free(ln0_ln_wt_and_bias_HBM_inf, group); 
 #endif
 
 #ifdef STEP_MVMBN0_Q
@@ -928,7 +905,7 @@ int __cdecl main()
     // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_B_HBM_inf, group);
 
     // Write command to FPGA
-    // elementwise_step_22(user_device, run_token);
+    elementwise_step_22(user_device, run_token);
 
     // Read output data from FPGA and compare
     struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         "./wall_oss/blocks_1/RMSNORM_visual_blocks_1_norm1/input.bin");

@@ -206,7 +206,7 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
         /*DAT_IN_A_BASE_ADDR*/ runtime2, /*DAT_IN_B_BASE_ADDR*/ hbm8, /*DAT_OUT_BASE_ADDR*/ runtime3 
     );
     // Input bin_inf
-    sprintf(filename[1], "./wall_oss/blocks_%d/ATTN_MASK/input.bin", index);
+    sprintf(filename[1], "./wall_oss/blocks_%d/ATTN_MASK/mask.bin", index);
     // struct bin_inf* elementwise0_dat_in_A_bin_inf  = get_bin_inf(0, 16*4*run_token*672,   "./wall_oss/blocks_0/ATTN_MASK/input.bin");
     // struct bin_inf* elementwise0_dat_in_B_bin_inf  = get_bin_inf(0, 16*4*run_token*672,   "./wall_oss/blocks_0/ATTN_MASK/mask.bin");
     struct bin_inf* elementwise0_dat_in_A_bin_inf  = get_bin_inf(0, 16*4*run_token*672,   "./wall_oss/blocks_0/ATTN_MASK/input.bin");
