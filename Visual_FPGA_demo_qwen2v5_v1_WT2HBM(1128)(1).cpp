@@ -88,7 +88,7 @@ int __cdecl main()
     //     size = init(h2cx_device[0], ddr_base_addr+20000000*i, 20000000);
     
 //     // ******************************** Prepare&Write&Verify Data  ******************************** //
-// qwen2_5_vl_2048_wt2hbm_0320_2040_load_params(user_device, h2cx_device[0], ".");
+qwen2_5_vl_2048_wt2hbm_0320_2040_load_params(user_device, h2cx_device[0], ".");
     
 
 #ifdef STEP0_MVMCONV3D
