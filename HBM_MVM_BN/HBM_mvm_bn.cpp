@@ -109,7 +109,7 @@ void WT_AND_SCALE_TRANS_FUNCTION_MVM_BN(struct FPGA_HBM_MVM_BN_cfg cfg , int *wt
                     int tmp = 0;
                     for(int p=0; p<8; p++)
                     {
-                        if((i*Tout+j*HBM_Port+k<cfg.Width_out) && (m*8+p < cfg.CHin))
+                        if((i*Tout+j*HBM_Port+k<cfg.CHout) && (m*8+p < cfg.CHin))
                         {
                             tmp_wt=wt[(cfg.CHin*(i*Tout+j*HBM_Port+k))+m*8+p];
                             tmp = tmp + ( (tmp_wt&(0x0000000f)) << cfg.WT_DW*p ); 
@@ -135,7 +135,7 @@ void WT_AND_SCALE_TRANS_FUNCTION_MVM_BN(struct FPGA_HBM_MVM_BN_cfg cfg , int *wt
                         int tmp = 0;
                         for(int p=0; p<2; p++)
                         {
-                            if((i*Tout+k*HBM_Port+m<cfg.Width_out) && (j*cfg.WT_CH_Tgroup_div_Tblock+n*2+p<cfg.WT_CHin_div_Tblock))
+                            if((i*Tout+k*HBM_Port+m<cfg.CHout) && (j*cfg.WT_CH_Tgroup_div_Tblock+n*2+p<cfg.WT_CHin_div_Tblock))
                                tmp = tmp +  ((wt_FP_scale[i*cfg.WT_CHin_div_Tblock*Tout + (j*cfg.WT_CH_Tgroup_div_Tblock+n*2+p) + (k*HBM_Port+m)*cfg.WT_CHin_div_Tblock]&0x0000ffff) << p*WT_quant_scale_DW);
                         }
                         HBM_wt_FP_scale[(i*(cfg.WT_scale_group_nums*Tout/HBM_Port*HBM_Port) + j*(Tout/HBM_Port*HBM_Port) + k*HBM_Port + m)*cfg.WT_CH_Tgroup_div_Tblock*16/32+n]=tmp;
@@ -349,7 +349,7 @@ void BN_WT_AND_BIAS_IN_TRANS_FUNCTION_MVM_BN(struct FPGA_HBM_MVM_BN_cfg cfg, int
         if (bn_wt_and_bias_in_mem[i] == NULL){printf("fail to malloc bn_wt_and_bias_mem \n");}
     }
 
-    for(int i=0;i<cfg.Width_out;i++)
+    for(int i=0;i<cfg.CHout;i++)
         bn_wt_and_bias_in[i] = ((bn_wt[i]<<16)&0xffff0000) + (bn_bias[i]&0x0000ffff);
 
     for(int i=0;i<2*cfg.CHout_div_LTout;i++)
@@ -358,7 +358,7 @@ void BN_WT_AND_BIAS_IN_TRANS_FUNCTION_MVM_BN(struct FPGA_HBM_MVM_BN_cfg cfg, int
         {
             for(int k=0;k<HBM_Port;k++)
             {
-                if(i*cfg.BN_CH_per_AXI_DW+j*HBM_Port+k<cfg.Width_out)
+                if(i*cfg.BN_CH_per_AXI_DW+j*HBM_Port+k<cfg.CHout)
                     bn_wt_and_bias_in_mem[i][k*BN_CH_PER_AXI+j] = bn_wt_and_bias_in[i*cfg.BN_CH_per_AXI_DW+j*HBM_Port+k];
                 else
                     bn_wt_and_bias_in_mem[i][k*BN_CH_PER_AXI+j] = 0;
