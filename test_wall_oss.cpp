@@ -37,24 +37,24 @@ using namespace std;
 
 // step switch
 
-#define STEP_LN0
-#define STEP_MVMBN0_Q
-#define STEP_EMBQ
-#define STEP_MVMBN0_K
-#define STEP_EMBK
-#define STEP_KV2HBMK_K
-#define STEP_TRP
-#define STEP_MASK
-#define STEP_SOFTMAX
-#define STEP_MVMBN0_V
-#define STEP_KV2HBM_V
-#define STEP_F2W
-#define STEP_MVMBN1
-#define STEP_ELEMENTWISE0
+// #define STEP_LN0
+// #define STEP_MVMBN0_Q
+// #define STEP_EMBQ
+// #define STEP_MVMBN0_K
+// #define STEP_EMBK
+// #define STEP_KV2HBMK_K
+// #define STEP_TRP
+// #define STEP_MASK
+// #define STEP_SOFTMAX
+// #define STEP_MVMBN0_V
+// #define STEP_KV2HBM_V
+// #define STEP_F2W
+// #define STEP_MVMBN1
+// #define STEP_ELEMENTWISE0
 
 #define STEP_LN1
 #define STEP_MVMBN2
-// #define STEP_ACT
+#define STEP_ACT
 // #define STEP_MVMBN3
 // #define STEP_ELEMENTWISE1
 // #define STEP_MVMBN4
@@ -650,7 +650,7 @@ int __cdecl main()
     HBM_ln_test(cfg_ln1, "wall_oss_run/blocks_0", "LN1", ln1_dat_in_bin_inf, ln1_weight_bin_inf, ln1_bias_bin_inf, ln1_dat_in_HBM_inf, ENABLE, ln1_ln_wt_and_bias_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln1_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln1_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln1_ln_wt_and_bias_HBM_inf, group);
 
     // Write command to FPGA
@@ -725,7 +725,7 @@ int __cdecl main()
     );
 
     // Input bin_inf
-    struct bin_inf* act_dat_in_bin_inf = get_bin_inf(0, 22*1*12288,  "./wall_oss/blocks_0/ACT/input.bin");
+    struct bin_inf* act_dat_in_bin_inf = get_bin_inf(0, 22*1*12288,         "./wall_oss/blocks_0/ACT/input.bin");
     // Output bin_inf
     struct bin_inf* *act_dat_in_HBM_inf       = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *act_parameter_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group/32);
@@ -734,14 +734,14 @@ int __cdecl main()
     HBM_act_test(cfg_act, "wall_oss_run/blocks_0", "ACT", act_dat_in_bin_inf, act_dat_in_HBM_inf, ENABLE, act_parameter_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_parameter_in_HBM_inf, group/32);
 
     // Write command to FPGA
     activate_step_18(user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/ACT/output.bin");
+    struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0,          "./wall_oss/blocks_0/ACT/output.bin");
     HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "BLOCK_read_data", "ACT", act_golden_out_bin_inf);
 
     // Malloc free
