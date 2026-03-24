@@ -18,7 +18,8 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0322_1429.h"                      // working with O input head = 16
 // #include "./rw_cmd/wall_oss_debug_0322_1602.h"                      // MLP
 // #include "./rw_cmd/wall_oss_debug_0322_2204.h"                      // 0_test_pass_version
-#include "./rw_cmd/wall_oss_debug_0324_0005.h"                          
+// #include "./rw_cmd/wall_oss_debug_0324_0005.h"                      // muti-one-pass
+#include "./rw_cmd/wall_oss_block_all_0324_1019.h"                  // muti-ViT_block
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
@@ -383,9 +384,13 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
 
 }
 
-int __cdecl main()
+int __cdecl main(int argc, char* argv[])
 {
-    int  model_part      = 0;
+    int  model_part      = 4;
+    if (argc > 1) {
+        model_part = atoi(argv[1]);
+    }
+    printf("Running with model_part = %d\n", model_part);
     char *read_filename  = "";
     char *write_filename = "";
     char BLOCK_name[20];
@@ -394,82 +399,88 @@ int __cdecl main()
     {
         case 0:
             generate_wt_emb_and_act();
-            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 0);
-        // {
-        //     for(int i=0;i<3;i++)
-        //     {
-        //         sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-        //         generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-        //     }
-        // } 
+            // generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 1);
+            // {
+            //     for(int i=0;i<32;i++)
+            //     {
+            //         sprintf(BLOCK_name, "VL_BLOCK%02d", i);
+            //         generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
+            //     }
+            // } 
         break;
         // LLM ACT and EMB
         case 1:
             generate_wt_emb_and_act();
         break;
-        // LLM BLOCK00 - BLOCK06
+        // 0-5
         case 2:
         {
-            for(int i=0;i<7;i++)
+            for(int i=0;i<5;i++)
             {
                 sprintf(BLOCK_name, "VL_BLOCK%02d", i);
                 generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
             }
-        } //D:\BaiduNetdiskDownload\FPGA_Demo_qwen2v5\rw_data\qwen2v5_vl_all_weights\BLOCK_write_data_qwen2v5_vl
+        } 
         break;
-        // LLM BLOCK07 - BLOCK13
+        // 6-10
         case 3:
         {
-            for(int i=7;i<14;i++)
+            for(int i=6;i<10;i++)
             {
                 sprintf(BLOCK_name, "VL_BLOCK%02d", i);
                 generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
             }
         }
         break;
-        // LLM BLOCK14 - BLOCK20
+        // 11-15
         case 4:
         {
-            for(int i=14;i<21;i++)
+            for(int i=11;i<15;i++)
             {
                 sprintf(BLOCK_name, "VL_BLOCK%02d", i);
                 generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
             }
         }
         break;
-        // LLM BLOCK21 - BLOCK27
+        // 16-20
         case 5:
         {
-            for(int i=21;i<28;i++)
+            for(int i=16;i<20;i++)
             {
                 sprintf(BLOCK_name, "VL_BLOCK%02d", i);
                 generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
             }
         }
         break;
-        // LLM BLOCK28 - BLOCK34
+        // 21-25
         case 6:
         {
-            for(int i=28;i<35;i++)
+            for(int i=21;i<25;i++)
             {
                 sprintf(BLOCK_name, "VL_BLOCK%02d", i);
                 generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
             }
         }
         break;
-        // LLM BLOCK35 - BLOCK39
+        // 26-30
         case 7:
         {
-            for(int i=35;i<36;i++)
+            for(int i=26;i<30;i++)
             {
                 sprintf(BLOCK_name, "VL_BLOCK%02d", i);
                 generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
             }
         }
         break;
-        // LLM Outlayer
+        // 26-30
         case 8:
-            // generate_wt_merger();
+        {
+            for(int i=31;i<32;i++)
+            {
+                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
+                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
+            }
+        }
         break;
         default:;
         break;

@@ -18,7 +18,8 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0322_1429.h"                      // working with O input head = 16
 // #include "./rw_cmd/wall_oss_debug_0322_1602.h"                      // MLP
 // #include "./rw_cmd/wall_oss_debug_0322_2204.h"                      // 0_test_pass_version
-#include "./rw_cmd/wall_oss_debug_0324_0005.h"                          
+// #include "./rw_cmd/wall_oss_debug_0324_0005.h"                      // muti-one-pass
+#include "./rw_cmd/wall_oss_block_all_0324_1019.h"                  // muti-ViT_block
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
