@@ -7,37 +7,37 @@ using namespace std;
 #include "./xdma_lib/read_file.cpp"
 #include "./xdma_lib/rt_lib.h"
 
-// #define BLOCK_0
-// #define BLOCK_1
-// #define BLOCK_2
-// #define BLOCK_3
-// #define BLOCK_4
-// #define BLOCK_5
-// #define BLOCK_6
-// #define BLOCK_7
-// #define BLOCK_8
-// #define BLOCK_9
-// #define BLOCK_10
-// #define BLOCK_11
-// #define BLOCK_12
-// #define BLOCK_13
-// #define BLOCK_14
-// #define BLOCK_15
-// #define BLOCK_16
-// #define BLOCK_17
-// #define BLOCK_18
-// #define BLOCK_19
-// #define BLOCK_20
-// #define BLOCK_21
-// #define BLOCK_22
-// #define BLOCK_23
-// #define BLOCK_24
-// #define BLOCK_25
-// #define BLOCK_26
-// #define BLOCK_27
-// #define BLOCK_28
-// #define BLOCK_29
-// #define BLOCK_30
+#define BLOCK_0
+#define BLOCK_1
+#define BLOCK_2
+#define BLOCK_3
+#define BLOCK_4
+#define BLOCK_5
+#define BLOCK_6
+#define BLOCK_7
+#define BLOCK_8
+#define BLOCK_9
+#define BLOCK_10
+#define BLOCK_11
+#define BLOCK_12
+#define BLOCK_13
+#define BLOCK_14
+#define BLOCK_15
+#define BLOCK_16
+#define BLOCK_17
+#define BLOCK_18
+#define BLOCK_19
+#define BLOCK_20
+#define BLOCK_21
+#define BLOCK_22
+#define BLOCK_23
+#define BLOCK_24
+#define BLOCK_25
+#define BLOCK_26
+#define BLOCK_27
+#define BLOCK_28
+#define BLOCK_29
+#define BLOCK_30
 // #define BLOCK_31
 
 // 全局变量 index
@@ -201,7 +201,7 @@ int __cdecl main()
         filename[i] = (char*)malloc(sizeof(char)*200);
     set_block_index();
 
-    // test_load_params(h2cx_device[0], ".");
+    test_load_params(h2cx_device[0], ".");
 
 #ifdef STEP_LN0
     // ******************************** STEP1 - LN0 ******************************** //
@@ -240,7 +240,11 @@ int __cdecl main()
     sprintf(filename[0],  "./wall_oss/blocks_%d/RMSNORM_visual_blocks_%d_norm1/input.bin", index+1, index+1);
     printf("%s\n", filename[0]);
     // Read output data from FPGA and compare
-    struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         filename[0]);
+    #ifdef BLOCK_30
+        struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         "./wall_oss/blocks_31/RMSNORM_visual_blocks_31_norm1/input.bin");
+    #else
+        struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         filename[0]);
+    #endif
     HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "wall_oss_run/blocks_0", "ELEMENTWISE2", elementwise2_golden_out_bin_inf);
 
     // Malloc free
