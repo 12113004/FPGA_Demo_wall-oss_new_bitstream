@@ -386,7 +386,7 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
 
 int __cdecl main(int argc, char* argv[])
 {
-    int  model_part      = 4;
+    int  model_part      = 0;
     if (argc > 1) {
         model_part = atoi(argv[1]);
     }
@@ -399,88 +399,139 @@ int __cdecl main(int argc, char* argv[])
     {
         case 0:
             generate_wt_emb_and_act();
-            // generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 1);
-            // {
-            //     for(int i=0;i<32;i++)
-            //     {
-            //         sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-            //         generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            //     }
-            // } 
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 5);
         break;
         // LLM ACT and EMB
         case 1:
             generate_wt_emb_and_act();
         break;
-        // 0-5
+        // 0
         case 2:
-        {
-            for(int i=0;i<5;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        } 
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 0);
         break;
-        // 6-10
+        // 1
         case 3:
-        {
-            for(int i=6;i<10;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        }
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK01", 1);
         break;
-        // 11-15
+        // 2
         case 4:
-        {
-            for(int i=11;i<15;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        }
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK02", 2);
         break;
-        // 16-20
+        // 3
         case 5:
-        {
-            for(int i=16;i<20;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        }
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK03", 3);
         break;
-        // 21-25
+        // 4
         case 6:
-        {
-            for(int i=21;i<25;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        }
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK04", 4);
         break;
-        // 26-30
+        // 5
         case 7:
-        {
-            for(int i=26;i<30;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        }
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK05", 5);
         break;
-        // 26-30
+        // 6
         case 8:
-        {
-            for(int i=31;i<32;i++)
-            {
-                sprintf(BLOCK_name, "VL_BLOCK%02d", i);
-                generate_wt_BLOCK(read_filename, write_filename, BLOCK_name, i);
-            }
-        }
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK06", 6);
+        break;
+        // 7
+        case 9:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK07", 7);
+        break;
+        // 8
+        case 10:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK08", 8);
+        break;
+        // 9
+        case 11:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK09", 9);
+        break;
+        // 10
+        case 12:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK10", 10);
+        break;
+        // 11
+        case 13:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK11", 11);
+        break;
+        // 12
+        case 14:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK12", 12);
+        break;
+        // 13
+        case 15:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK13", 13);
+        break;
+        // 14
+        case 16:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK14", 14);
+        break;
+        // 15
+        case 17:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK15", 15);
+        break;
+        // 16
+        case 18:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK16", 16);
+        break;
+        // 17
+        case 19:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK17", 17);
+        break;
+        // 18
+        case 20:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK18", 18);
+        break;
+        // 19
+        case 21:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK19", 19);
+        break;
+        // 20
+        case 22:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK20", 20);
+        break;
+        // 21
+        case 23:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK21", 21);
+        break;
+        // 22
+        case 24:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK22", 22);
+        break;
+        // 23
+        case 25:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK23", 23);
+        break;
+        // 24
+        case 26:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK24", 24);
+        break;
+        // 25
+        case 27:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK25", 25);
+        break;
+        // 26
+        case 28:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK26", 26);
+        break;
+        // 27
+        case 29:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK27", 27);
+        break;
+        // 28
+        case 30:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK28", 28);
+        break;
+        // 29
+        case 31:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK29", 29);
+        break;
+        // 30
+        case 32:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK30", 30);
+        break;
+        // 31
+        case 33:
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK31", 31);
         break;
         default:;
         break;
