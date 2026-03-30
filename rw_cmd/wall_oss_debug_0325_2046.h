@@ -566,7 +566,7 @@ void softmax_step_8(HANDLE& device, int token, int last_token) {
     CSB_Write(device, 139, (token + last_token));
     CSB_Write(device, 140, ((w < Wout_Split_Times_minus1) ? out_w_per_slice : out_w_in_last_slice));
     CSB_Write(device, 141, ((w * out_w_per_slice) + ((token + last_token) - token)));
-    CSB_Write(device, 142, ((token > 1) ? 1 : 0));
+    CSB_Write(device, 142, 1);
     CSB_Write(device, 143, 0);
     CSB_Write(device, 144, 0);
     CSB_Write(device, 145, 8);
