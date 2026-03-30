@@ -19,7 +19,6 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0322_1602.h"                      // MLP
 // #include "./rw_cmd/wall_oss_debug_0322_2204.h" 
 #include "./rw_cmd/wall_oss_debug_0325_2046.h" 
-// #include "./rw_cmd/wall_oss_debug_0329_1753.h" 
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
@@ -49,7 +48,7 @@ using namespace std;
 // #define STEP_SOFTMAX
 // #define STEP_MVMBN0_V
 // #define STEP_KV2HBM_V
-// #define STEP_F2W
+#define STEP_F2W
 // #define STEP_MVMBN1
 // #define STEP_ELEMENTWISE0
 
@@ -380,7 +379,7 @@ int __cdecl main()
     HBM_softmax_test(cfg_softmax , "wall_oss_run/model_layers_0", "SOFTMAX", softmax_dat_in_bin_inf, softmax_dat_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], softmax_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], softmax_dat_in_HBM_inf, group);
 
     // Write command to FPGA
     softmax_step_8(user_device, run_token, last_token);
@@ -442,34 +441,34 @@ int __cdecl main()
 
 #ifdef STEP_KV2HBM_V
     // ******************************** STEP12 - KV2HBM_V ******************************** //
-    // // Parameter Config
-    // struct FPGA_HBM_KV2HBM_cfg cfg_kv2hbmv = GetFPGA_HBM_KV2HBM_cfg(
-    //     /*This_Token*/ run_token, /*Last_Token*/ last_token, /*Weight_Head*/ 8, /*MAX_CH_per_HEAD*/ 128, /*MAX_TOKEN*/ 2048, 
-    //     /*DAT_IN_BASE_ADDR*/ runtime4, /*DAT_OUT_BASE_ADDR*/ hbm_cache1
-    // );
+    // Parameter Config
+    struct FPGA_HBM_KV2HBM_cfg cfg_kv2hbmv = GetFPGA_HBM_KV2HBM_cfg(
+        /*This_Token*/ run_token, /*Last_Token*/ last_token, /*Weight_Head*/ 4, /*MAX_CH_per_HEAD*/ 128, /*MAX_TOKEN*/ 2048, 
+        /*DAT_IN_BASE_ADDR*/ runtime3, /*DAT_OUT_BASE_ADDR*/ hbm_cache1
+    );
 
-    // // Input bin_inf
-    // struct bin_inf* kv2hbmv_dat_in_bin_inf = get_bin_inf(0, 8*19*128, "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_v_proj/output.bin");
-    // // Output bin_inf
-    // struct bin_inf* *kv2hbmv_dat_in_HBM_inf    = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    // struct bin_inf* *kv2hbmv_golden_out_bin_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf));
+    // Input bin_inf
+    struct bin_inf* kv2hbmv_dat_in_bin_inf = get_bin_inf(0, 8*19*128, "./wall_oss/model_layers_0/LANG_ATTN_OUTPUT/value_states.bin");
+    // Output bin_inf
+    struct bin_inf* *kv2hbmv_dat_in_HBM_inf    = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *kv2hbmv_golden_out_bin_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf));
 
-    // // Transform data
-    // HBM_kv2hbm_test(cfg_kv2hbmv, "wall_oss_run/model_layers_0", "KV2HBMV", kv2hbmv_dat_in_bin_inf, kv2hbmv_dat_in_HBM_inf, kv2hbmv_golden_out_bin_inf, ENABLE);
+    // Transform data
+    HBM_kv2hbm_test(cfg_kv2hbmv, "wall_oss_run/model_layers_0", "KV2HBMV", kv2hbmv_dat_in_bin_inf, kv2hbmv_dat_in_HBM_inf, kv2hbmv_golden_out_bin_inf, ENABLE);
 
-    // // Write data to FPGA
-    // // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], kv2hbmv_dat_in_HBM_inf, group);
+    // Write data to FPGA
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], kv2hbmv_dat_in_HBM_inf, group);
 
     // Write command to FPGA
     kvcache2hbm_step_10(user_device, run_token, last_token);
 
-    // // Read output data from FPGA and compare
-    // // HBM_kv2hbm_receive_and_compare(cfg_kv2hbmv, c2hx_device[0], "wall_oss_run/model_layers_0",  "KV2HBMV", kv2hbmv_golden_out_bin_inf[0], V_Mode);
+    // Read output data from FPGA and compare
+    HBM_kv2hbm_receive_and_compare(cfg_kv2hbmv, c2hx_device[0], "wall_oss_run/model_layers_0",  "KV2HBMV", kv2hbmv_golden_out_bin_inf[0], V_Mode);
 
-    // // Malloc free
-    // bin_inf_malloc_free(kv2hbmv_dat_in_bin_inf);
-    // bin_inf_malloc_free(kv2hbmv_golden_out_bin_inf[0]);
-    // HBM_bin_inf_malloc_free(kv2hbmv_dat_in_HBM_inf, group);
+    // Malloc free
+    bin_inf_malloc_free(kv2hbmv_dat_in_bin_inf);
+    bin_inf_malloc_free(kv2hbmv_golden_out_bin_inf[0]);
+    HBM_bin_inf_malloc_free(kv2hbmv_dat_in_HBM_inf, group);
 #endif
 
 #ifdef STEP_F2W
@@ -480,33 +479,33 @@ int __cdecl main()
         /*DAT_IN_BASE_ADDR*/ runtime2, /*WT_BASE_ADDR*/ hbm_cache1, /*DAT_OUT_BASE_ADDR*/ runtime1
     );
 
-    // // Input bin_inf
-    // struct bin_inf* f2w_dat_in_bin_inf = get_bin_inf(0, 32*22*128,       "./wall_oss/model_layers_0/F2W/attn_weights.bin");
-    // struct bin_inf* f2w_wt_in_bin_inf  = get_bin_inf(0, 8*22*128,        "./wall_oss/model_layers_0/F2W/v.bin");
-    // // Output bin_inf
-    // struct bin_inf* *f2w_dat_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    // struct bin_inf* *f2w_wt_in_HBM_inf  = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // Input bin_inf
+    struct bin_inf* f2w_dat_in_bin_inf = get_bin_inf(0, 32*22*128,       "./wall_oss/model_layers_0/LANG_ATTN_OUTPUT/attn_weights.bin");
+    struct bin_inf* f2w_wt_in_bin_inf  = get_bin_inf(0, 8*22*128,        "./wall_oss/model_layers_0/LANG_ATTN_OUTPUT/value_states.bin");
+    // Output bin_inf
+    struct bin_inf* *f2w_dat_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *f2w_wt_in_HBM_inf  = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
-    // // Transform data
-    // HBM_f2w_test(cfg_f2w, "wall_oss_run/model_layers_0", "F2W", f2w_dat_in_bin_inf, f2w_wt_in_bin_inf, f2w_dat_in_HBM_inf, ENABLE, f2w_wt_in_HBM_inf, ENABLE);
+    // Transform data
+    HBM_f2w_test(cfg_f2w, "wall_oss_run/model_layers_0", "F2W", f2w_dat_in_bin_inf, f2w_wt_in_bin_inf, f2w_dat_in_HBM_inf, ENABLE, f2w_wt_in_HBM_inf, ENABLE);
 
-    // // Write data to FPGA
-    // // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], f2w_dat_in_HBM_inf, group);
-    // // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], f2w_wt_in_HBM_inf, group);
+    // Write data to FPGA
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], f2w_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], f2w_wt_in_HBM_inf, group);
 
     // Write command to FPGA
     mvm_f16xf16_step_11(user_device, run_token, last_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* f2w_golden_out_bin_inf = get_bin_inf(0, 32*22*128, "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/input.bin");
+    struct bin_inf* f2w_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/model_layers_0/LANG_ATTN_OUTPUT/attn_output.bin");
     HBM_f2w_receive_and_compare(cfg_f2w, c2hx_device[0], "wall_oss_run/model_layers_0", "F2W", f2w_golden_out_bin_inf);
 
     // Malloc free
-    // bin_inf_malloc_free(f2w_dat_in_bin_inf);
-    // bin_inf_malloc_free(f2w_wt_in_bin_inf);
-    // // bin_inf_malloc_free(f2w_golden_out_bin_inf );
-    // HBM_bin_inf_malloc_free(f2w_dat_in_HBM_inf, group);
-    // HBM_bin_inf_malloc_free(f2w_wt_in_HBM_inf, group);
+    bin_inf_malloc_free(f2w_dat_in_bin_inf);
+    bin_inf_malloc_free(f2w_wt_in_bin_inf);
+    bin_inf_malloc_free(f2w_golden_out_bin_inf );
+    HBM_bin_inf_malloc_free(f2w_dat_in_HBM_inf, group);
+    HBM_bin_inf_malloc_free(f2w_wt_in_HBM_inf, group);
 #endif
 
 #ifdef STEP_MVMBN1

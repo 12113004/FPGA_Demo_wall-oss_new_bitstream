@@ -14,18 +14,6 @@ void HBM_f2w_test(struct FPGA_HBM_F2W_cfg cfg, char* path_name, char* head_name,
     }
     read_bin_with_head(dat_in_bin_inf->bin_data_file, dat_in, cfg.Original_Feature_Head, cfg.Hin*cfg.Win*cfg.CHin);
 
-    // set dat data
-    // for(int i=0;i<cfg.Original_Feature_Head;i++)
-    // {
-    //    for(int j=0;j<cfg.Hin*cfg.Win;j++)
-    //     {
-    //         for(int k=0;k<cfg.CHin;k++)
-    //         {
-    //             if(j<2&&k<11) dat_in[i][j*cfg.CHin+k] = 0x3c00;
-    //             else dat_in[i][j*cfg.CHin+k] = 0x0000;
-    //         }
-    //     }   
-    // }
 
     // bit [`DAT_DW_in-1:0] wt_in [`Weight_Head][`WT_CHin][`WT_CHout];
     int **wt_in = (int**)malloc(sizeof(int*)*cfg.Weight_Head);
@@ -36,12 +24,40 @@ void HBM_f2w_test(struct FPGA_HBM_F2W_cfg cfg, char* path_name, char* head_name,
     }
     read_bin_with_head(wt_in_bin_inf->bin_data_file, wt_in, cfg.Weight_Head, cfg.WT_CHin*cfg.WT_CHout);
 
+    // set dat data
+    for(int i=0;i<cfg.Original_Feature_Head;i++)
+    {
+       for(int j=0;j<cfg.Hin*cfg.Win;j++)
+        {
+            for(int k=0;k<cfg.CHin;k++)
+            {
+                if(j==1&&i==0) {
+                    // dat_in[i][j*cfg.CHin+k] = 0x399a;
+                    uint16_t dat_u16 = (uint16_t)dat_in[i][j*cfg.CHin+k];
+                    printf("data[%d] = %f, 0x%04x\n", k, (float)*(half*)&dat_u16, dat_u16);
+                }
+                else dat_in[i][j*cfg.CHin+k] = 0x0000;
+            }
+        }   
+    }
     // set wt data
-    // for(int i=0;i<cfg.Weight_Head;i++)
-    // {
-    //    for(int j=0;j<cfg.WT_CHin*cfg.WT_CHout;j++)
-    //        wt_in[i][j] = 0x3c00;
-    // }
+    for(int i=0;i<cfg.Weight_Head;i++)
+    {
+       for(int j=0;j<cfg.WT_CHin;j++)
+       {
+            for(int k=0;k<cfg.WT_CHout;k++)
+            {
+                if (k==0&&i==0) { 
+                    uint16_t wt_u16 = (uint16_t)wt_in[i][j*cfg.WT_CHout+k];
+                    printf("weight[%d] = %f, 0x%04x\n", j, (float)*(half*)&wt_u16, wt_u16);
+                }
+
+                else     wt_in[i][j*cfg.WT_CHout+k] = 0x0000;
+                
+            }
+                
+       }
+    }
 
     int **dat_in_HBM = (int**)malloc(sizeof(int*)*group);
     int dat_in_HBM_size = cfg.Original_Feature_Head*cfg.Win*cfg.Hin*cfg.CHin_div_LTout*MAX_DAT_DW*L_Tout/32/group;
