@@ -16,7 +16,6 @@ using namespace std;
 #include "./tests/HBM_softmax_test.cpp"
 #include "./tests/HBM_f2w_test.cpp"
 #include "./tests/HBM_act_minicpm_test.cpp"
-#include "./tests/HBM_cnn_test.cpp"
 #include "./tests/HBM_mvm_bn_test.cpp"
 #include "./tests/HBM_mvm_bn_argmax_test.cpp"
 
@@ -46,40 +45,42 @@ int __cdecl main()
     // ************************************************************************************ //
       //////////////////////////////////////////////////////////////////////////////////////
 
-    // Combine output data from FPGA and compare 
-    struct bin_inf* mvmbn0_q_dat_in_bin_inf = get_bin_inf(0, 1*621*2304, "./rw_data/minicpm_llm_test/attention/test_q/language_block_0_qkv_proj_input.bin");
-    struct bin_inf* mvmbn0_q_weight_bin_inf = get_bin_inf(0, 18432*2304, "./rw_data/minicpm_llm_test/attention/test_q/language_block_w_q_weight_int32_padded.bin"); 
-    struct bin_inf* mvmbn0_q_scales_bin_inf = get_bin_inf(0, 18432*18, "./rw_data/minicpm_llm_test/attention/test_q/language_block_q_weight_scales_padded.bin");   
+    int Token = 254;
+    int CHin = 2048;
+    int CHout = 512;
 
-    int *dat_in = (int*)malloc(sizeof(int)*621*2304);
+    // Combine output data from FPGA and compare 
+    struct bin_inf* mvmbn0_q_dat_in_bin_inf = get_bin_inf(0, Token*CHin,    "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_v_proj/input.bin");
+    struct bin_inf* mvmbn0_q_weight_bin_inf = get_bin_inf(0, CHout*CHin,    "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_v_proj/weight_int4.bin"); 
+    struct bin_inf* mvmbn0_q_scales_bin_inf = get_bin_inf(0, CHout*CHin/128,      "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_v_proj/scale.bin");
+
+    int *dat_in = (int*)malloc(sizeof(int)*Token*CHin);
     if (dat_in == NULL){perror("main");return 0;}
-    read_bin(mvmbn0_q_dat_in_bin_inf->bin_data_file, dat_in, 621*2304);
-    int *weight_in = (int*)malloc(sizeof(int)*18432*2304);
+    read_bin(mvmbn0_q_dat_in_bin_inf->bin_data_file, dat_in, Token*CHin);
+    int *weight_in = (int*)malloc(sizeof(int)*CHout*CHin);
     if (weight_in == NULL){perror("main");return 0;}
-    read_bin_32b(mvmbn0_q_weight_bin_inf->bin_data_file, weight_in, 18432*2304);
-    int *scales_in = (int*)malloc(sizeof(int)*18432*18);
+    read_bin_32b(mvmbn0_q_weight_bin_inf->bin_data_file, weight_in, CHout*CHin);
+    int *scales_in = (int*)malloc(sizeof(int)*CHout*CHin/128);
     if (scales_in == NULL){perror("main");return 0;}
-    read_bin(mvmbn0_q_scales_bin_inf->bin_data_file, scales_in, 18432*18);
+    read_bin(mvmbn0_q_scales_bin_inf->bin_data_file, scales_in, CHout*CHin/128);
     
-    half *dat_in_half = (half*)malloc(sizeof(half)*621*2304);
+    half *dat_in_half = (half*)malloc(sizeof(half)*Token*CHin);
     if (dat_in_half == NULL){perror("main");return 0;}
-    int *weight_in_CHin = (int*)malloc(sizeof(int)*2304);
+    int *weight_in_CHin = (int*)malloc(sizeof(int)*CHin);
     if (weight_in_CHin == NULL){perror("main");return 0;}
-    half *scales_in_half= (half*)malloc(sizeof(half)*18432*18);
+    half *scales_in_half= (half*)malloc(sizeof(half)*CHout*CHin/128);
     if (scales_in_half == NULL){perror("main");return 0;}
 
-    int Token = 545;
-    int CHout = 1600;
-    for(int i=0; i<2304; i=i+1)
-        dat_in_half[i] = *(half*)&dat_in[i+Token*2304];
-    for(int i=0; i<2304; i=i+1)
-        weight_in_CHin[i] = weight_in[i+CHout*2304];
-    for(int i=0; i<18; i=i+1)
-        scales_in_half[i] = *(half*)&scales_in[i+CHout*18];
+    for(int i=0; i<CHin; i=i+1)
+        dat_in_half[i] = *(half*)&dat_in[i+Token*CHin];
+    for(int i=0; i<CHin; i=i+1)
+        weight_in_CHin[i] = weight_in[i+CHout*CHin];
+    for(int i=0; i<CHin/128; i=i+1)
+        scales_in_half[i] = *(half*)&scales_in[i+CHout*CHin/128];
 
-    half *dat_out_in_half1 = (half*)malloc(sizeof(half)*2304);
+    half *dat_out_in_half1 = (half*)malloc(sizeof(half)*CHin);
     half dat_out_in_half2 = (half)0;
-    for(int i=0; i<18; i=i+1)
+    for(int i=0; i<CHin/128; i=i+1)
     {
         for(int j=0; j<128; j=j+1)
             dat_out_in_half1[i*128+j] = dat_in_half[i*128+j] * weight_in_CHin[i*128+j] * scales_in_half[i];

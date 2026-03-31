@@ -50,9 +50,9 @@ using namespace std;
 #define STEP_TRP
 #define STEP_MASK
 #define STEP_SOFTMAX
-// #define STEP_MVMBN0_V
-// #define STEP_KV2HBM_V
-// #define STEP_F2W
+#define STEP_MVMBN0_V
+#define STEP_KV2HBM_V
+#define STEP_F2W
 // #define STEP_MVMBN1
 // #define STEP_ELEMENTWISE0
 
@@ -505,7 +505,7 @@ int __cdecl main()
     HBM_kv2hbm_test(cfg_kv2hbmv, "wall_oss_run/model_layers_0", "KV2HBMV", kv2hbmv_dat_in_bin_inf, kv2hbmv_dat_in_HBM_inf, kv2hbmv_golden_out_bin_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], kv2hbmv_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], kv2hbmv_dat_in_HBM_inf, group);
 
     // Write command to FPGA
     kvcache2hbm_step_11(user_device, run_token, last_token);
