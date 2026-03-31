@@ -41,7 +41,7 @@ using namespace std;
 
 // step switch
 
-// #define STEP_LN0
+#define STEP_LN0
 #define STEP_MVMBN0_Q
 #define STEP_EMBQ
 #define STEP_MVMBN0_K
@@ -53,10 +53,10 @@ using namespace std;
 #define STEP_MVMBN0_V
 #define STEP_KV2HBM_V
 #define STEP_F2W
-// #define STEP_MVMBN1
-// #define STEP_ELEMENTWISE0
+#define STEP_MVMBN1
+#define STEP_ELEMENTWISE0
 
-// #define STEP_LN1
+#define STEP_LN1
 // #define STEP_E0_MASK
 // #define STEP_E0_MVMBN2
 // #define STEP_E0_ACT
@@ -560,16 +560,16 @@ int __cdecl main()
     // ******************************** STEP14 - MVMBN1 ******************************** //
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn1 = GetFPGA_HBM_MVM_BN_cfg(
-        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 16*4*128, /*Width_out*/ 1280,
-        /*DAT_IN_BASE_ADDR*/ runtime3, /*HBM00_WT_BASE_ADDR*/ hbm11, /*BN_BASE_ADDR*/ hbm12, /*DAT_OUT_BASE_ADDR*/ runtime0
+        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 2048, /*Width_out*/ 2048,
+        /*DAT_IN_BASE_ADDR*/ runtime1, /*HBM00_WT_BASE_ADDR*/ hbm9, /*BN_BASE_ADDR*/ hbm10, /*DAT_OUT_BASE_ADDR*/ runtime2
     );
 
     // Input bin_inf
-    struct bin_inf* mvmbn1_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,            "./wall_oss/model_layers_0/05_LINEAR_visual_model_layers_0_attn_proj/input.bin");
-    struct bin_inf* mvmbn1_weight_bin_inf = get_bin_inf(0, 4096*4096,            "./wall_oss/model_layers_0/05_LINEAR_visual_model_layers_0_attn_proj/weight_int4.bin"); 
-    struct bin_inf* mvmbn1_scales_bin_inf = get_bin_inf(0, 32*4096,              "./wall_oss/model_layers_0/05_LINEAR_visual_model_layers_0_attn_proj/scale.bin");
+    struct bin_inf* mvmbn1_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,            "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/input.bin");
+    struct bin_inf* mvmbn1_weight_bin_inf = get_bin_inf(0, 4096*4096,            "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/weight_int4.bin"); 
+    struct bin_inf* mvmbn1_scales_bin_inf = get_bin_inf(0, 32*4096,              "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/scale.bin");
     struct bin_inf* mvmbn1_wt_bin_inf     = get_bin_inf(0, 4096,                 "./rw_data/bn_wt_1.bin");
-    struct bin_inf* mvmbn1_bias_bin_inf   = get_bin_inf(0, 4096,                 "./wall_oss/model_layers_0/05_LINEAR_visual_model_layers_0_attn_proj/bias.bin");
+    struct bin_inf* mvmbn1_bias_bin_inf   = get_bin_inf(0, 4096,                 "./rw_data/bn_and_k_bias_0.bin");
     // Output bin_inf
     struct bin_inf* *mvmbn1_wt_and_scale_in_HBM_inf   = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *mvmbn1_dat_in_HBM_inf            = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
@@ -585,10 +585,10 @@ int __cdecl main()
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn1_bn_wt_and_bias_in_HBM_inf, group);
 
     // Write command to FPGA
-    mvm_f16xi4_step_14 (user_device, run_token);
+    mvm_f16xi4_step_13 (user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* mvmbn1_golden_out_bin_inf = get_bin_inf(0, 0,                "./wall_oss/model_layers_0/05_LINEAR_visual_model_layers_0_attn_proj/output.bin");
+    struct bin_inf* mvmbn1_golden_out_bin_inf = get_bin_inf(0, 0,                "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/output.bin");
     HBM_mvmbn_receive_and_compare(cfg_mvmbn1, c2hx_device[0], "wall_oss_run/model_layers_0", "MVMBN1", mvmbn1_golden_out_bin_inf);
 
     // Malloc free
@@ -626,7 +626,7 @@ int __cdecl main()
     // // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise0_dat_in_B_HBM_inf, group);
 
     // Write command to FPGA
-    elementwise_step_15(user_device, run_token);
+    elementwise_step_14(user_device, run_token);
 
     // // Read output data from FPGA and compare
     // struct bin_inf* elementwise0_golden_out_bin_inf = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE0/ELEMENTWISE0_output.bin");
@@ -645,7 +645,7 @@ int __cdecl main()
     // Parameter Config
     struct FPGA_HBM_LN_cfg cfg_ln1 = GetFPGA_HBM_LN_cfg(
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ hidden_dim,
-        /*DAT_IN_BASE_ADDR*/ runtime1, /*LN_WT_BASE_ADDR*/ hbm10, /*DAT_OUT_BASE_ADDR*/ runtime0
+        /*DAT_IN_BASE_ADDR*/ runtime1, /*LN_WT_BASE_ADDR*/ hbm11, /*DAT_OUT_BASE_ADDR*/ runtime0
     );
     // Input bin_inf
     struct bin_inf* ln1_dat_in_bin_inf   = get_bin_inf(0, 22*1*4096,         "./wall_oss/model_layers_0/RMSNORM_model_layers_0_post_attention_layernorm/input.bin");
@@ -659,11 +659,11 @@ int __cdecl main()
     HBM_ln_test(cfg_ln1, "wall_oss_run/model_layers_0", "LN1", ln1_dat_in_bin_inf, ln1_weight_bin_inf, ln1_bias_bin_inf, ln1_dat_in_HBM_inf, ENABLE, ln1_ln_wt_and_bias_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln1_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln1_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], ln1_ln_wt_and_bias_HBM_inf, group);
 
     // Write command to FPGA
-    norm_step_14(user_device, run_token);
+    norm_step_15(user_device, run_token);
 
     // Read output data from FPGA and compare
     struct bin_inf* ln1_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/model_layers_0/RMSNORM_model_layers_0_post_attention_layernorm/output.bin");
