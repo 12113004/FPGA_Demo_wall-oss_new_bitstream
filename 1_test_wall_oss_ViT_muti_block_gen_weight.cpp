@@ -386,7 +386,7 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
 
 int __cdecl main(int argc, char* argv[])
 {
-    int  model_part      = 0;
+    int  model_part      = 1;
     if (argc > 1) {
         model_part = atoi(argv[1]);
     }
@@ -399,7 +399,7 @@ int __cdecl main(int argc, char* argv[])
     {
         case 0:
             generate_wt_emb_and_act();
-            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 5);
+            generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 0);
         break;
         // LLM ACT and EMB
         case 1:
