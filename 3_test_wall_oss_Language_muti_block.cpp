@@ -7,6 +7,207 @@ using namespace std;
 #include "./xdma_lib/read_file.cpp"
 #include "./xdma_lib/rt_lib.h"
 
+#define BLOCK_0
+#define BLOCK_1
+#define BLOCK_2
+#define BLOCK_3
+#define BLOCK_4
+#define BLOCK_5
+#define BLOCK_6
+#define BLOCK_7
+#define BLOCK_8
+#define BLOCK_9
+#define BLOCK_10
+#define BLOCK_11
+#define BLOCK_12
+#define BLOCK_13
+#define BLOCK_14
+#define BLOCK_15
+#define BLOCK_16
+#define BLOCK_17
+#define BLOCK_18
+#define BLOCK_19
+#define BLOCK_20
+#define BLOCK_21
+#define BLOCK_22
+#define BLOCK_23
+#define BLOCK_24
+#define BLOCK_25
+#define BLOCK_26
+#define BLOCK_27
+#define BLOCK_28
+#define BLOCK_29
+#define BLOCK_30
+#define BLOCK_31
+#define BLOCK_32
+#define BLOCK_33
+#define BLOCK_34
+// #define BLOCK_35
+
+// 全局变量 index
+int index;
+int end_index;
+
+// 2. 根据宏定义给 index 赋值
+void set_block_index(void)
+{
+    #ifdef BLOCK_0
+    index = 0;
+    #elif defined(BLOCK_1)
+    index = 1;
+    #elif defined(BLOCK_2)
+    index = 2;
+    #elif defined(BLOCK_3)
+    index = 3;
+    #elif defined(BLOCK_4)
+    index = 4;
+    #elif defined(BLOCK_5)
+    index = 5;
+    #elif defined(BLOCK_6)
+    index = 6;
+    #elif defined(BLOCK_7)
+    index = 7;
+    #elif defined(BLOCK_8)
+    index = 8;
+    #elif defined(BLOCK_9)
+    index = 9;
+    #elif defined(BLOCK_10)
+    index = 10;
+    #elif defined(BLOCK_11)
+    index = 11;
+    #elif defined(BLOCK_12)
+    index = 12;
+    #elif defined(BLOCK_13)
+    index = 13;
+    #elif defined(BLOCK_14)
+    index = 14;
+    #elif defined(BLOCK_15)
+    index = 15;
+    #elif defined(BLOCK_16)
+    index = 16;
+    #elif defined(BLOCK_17)
+    index = 17;
+    #elif defined(BLOCK_18)
+    index = 18;
+    #elif defined(BLOCK_19)
+    index = 19;
+    #elif defined(BLOCK_20)
+    index = 20;
+    #elif defined(BLOCK_21)
+    index = 21;
+    #elif defined(BLOCK_22)
+    index = 22;
+    #elif defined(BLOCK_23)
+    index = 23;
+    #elif defined(BLOCK_24)
+    index = 24;
+    #elif defined(BLOCK_25)
+    index = 25;
+    #elif defined(BLOCK_26)
+    index = 26;
+    #elif defined(BLOCK_27)
+    index = 27;
+    #elif defined(BLOCK_28)
+    index = 28;
+    #elif defined(BLOCK_29)
+    index = 29;
+    #elif defined(BLOCK_30)
+    index = 30;
+    #elif defined(BLOCK_31)
+    index = 31;
+    #elif defined(BLOCK_32)
+    index = 32;
+    #elif defined(BLOCK_33)
+    index = 33;
+    #elif defined(BLOCK_34)
+    index = 34;
+    #elif defined(BLOCK_35)
+    index = 35;
+    #else
+    // 无任何 BLOCK 定义时的默认值
+    index = -1;
+    #endif
+}
+
+void set_block_end_index(void)
+{
+    #ifdef BLOCK_35
+    end_index = 35;
+    #elif defined(BLOCK_34)
+    end_index = 34;
+    #elif defined(BLOCK_33)
+    end_index = 33;
+    #elif defined(BLOCK_32)
+    end_index = 32;
+    #elif defined(BLOCK_31)
+    end_index = 31;
+    #elif defined(BLOCK_30)
+    end_index = 30;
+    #elif defined(BLOCK_29)
+    end_index = 29;
+    #elif defined(BLOCK_28)
+    end_index = 28;
+    #elif defined(BLOCK_27)
+    end_index = 27;
+    #elif defined(BLOCK_26)
+    end_index = 26;
+    #elif defined(BLOCK_25)
+    end_index = 25;
+    #elif defined(BLOCK_24)
+    end_index = 24;
+    #elif defined(BLOCK_23)
+    end_index = 23;
+    #elif defined(BLOCK_22)
+    end_index = 22;
+    #elif defined(BLOCK_21)
+    end_index = 21;
+    #elif defined(BLOCK_20)
+    end_index = 20;
+    #elif defined(BLOCK_19)
+    end_index = 19;
+    #elif defined(BLOCK_18)
+    end_index = 18;
+    #elif defined(BLOCK_17)
+    end_index = 17;
+    #elif defined(BLOCK_16)
+    end_index = 16;
+    #elif defined(BLOCK_15)
+    end_index = 15;
+    #elif defined(BLOCK_14)
+    end_index = 14;
+    #elif defined(BLOCK_13)
+    end_index = 13;
+    #elif defined(BLOCK_12)
+    end_index = 12;
+    #elif defined(BLOCK_11)
+    end_index = 11;
+    #elif defined(BLOCK_10)
+    end_index = 10;
+    #elif defined(BLOCK_9)
+    end_index = 9;
+    #elif defined(BLOCK_8)
+    end_index = 8;
+    #elif defined(BLOCK_7)
+    end_index = 7;
+    #elif defined(BLOCK_6)
+    end_index = 6;
+    #elif defined(BLOCK_5)
+    end_index = 5;
+    #elif defined(BLOCK_4)
+    end_index = 4;
+    #elif defined(BLOCK_3)
+    end_index = 3;
+    #elif defined(BLOCK_2)
+    end_index = 2;
+    #elif defined(BLOCK_1)
+    end_index = 1;
+    #elif defined(BLOCK_0)
+    end_index = 0;
+    #else
+    // 无任何 BLOCK 定义时的默认值
+    end_index = -1;
+    #endif
+}
 // Read and write command 
 // #include "./rw_cmd/qwen3_block_ohbm_test_tb_cmd.h"
 // #include "./rw_cmd/qwen3_block_ohbm_test_1124_1554.h"
@@ -45,34 +246,6 @@ using namespace std;
 // step switch
 
 #define STEP_LN0
-// #define STEP_MVMBN0_Q
-// #define STEP_EMBQ
-// #define STEP_MVMBN0_K
-// #define STEP_EMBK
-// #define STEP_KV2HBMK_K
-// #define STEP_TRP
-// #define STEP_MASK
-// #define STEP_SOFTMAX
-// #define STEP_MVMBN0_V
-// #define STEP_KV2HBM_V
-// #define STEP_F2W
-// #define STEP_MVMBN1
-// #define STEP_ELEMENTWISE0
-
-// #define STEP_LN1
-// #define STEP_E0_MVMBN2
-// #define STEP_E0_ACT
-// #define STEP_E0_MVMBN3
-// #define STEP_E0_ELEMENTWISE1
-// #define STEP_E0_MVMBN4
-// #define STEP_E0_MASK
-// #define STEP_E1_MVMBN2
-// #define STEP_E1_ACT
-// #define STEP_E1_MVMBN3
-// #define STEP_E1_ELEMENTWISE1
-// #define STEP_E1_MVMBN4
-// #define STEP_E1_MASK
-// #define STEP_CAT
 #define STEP_ELEMENTWISE2
 
 // #define STEP_LN_Outlayer
@@ -101,7 +274,13 @@ int __cdecl main()
    int hidden_dim   = 2048;
    int kvcache_mode = (run_token-last_token == 1)? 1 : 0;
 
-   test_load_params(h2cx_device[0], ".");
+   char** filename = (char**)malloc(sizeof(char*)*4);
+   for(int i=0;i<4;i++)
+       filename[i] = (char*)malloc(sizeof(char)*200);
+   set_block_index();
+   set_block_end_index();
+
+//    test_load_params(h2cx_device[0], ".");
 
 #ifdef STEP_LN0
     // ******************************** STEP1 - LN0 ******************************** //
@@ -111,7 +290,9 @@ int __cdecl main()
         /*DAT_IN_BASE_ADDR*/ runtime0, /*LN_WT_BASE_ADDR*/ hbm0, /*DAT_OUT_BASE_ADDR*/ runtime1
     );
     // Input bin_inf
-    struct bin_inf* ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/model_layers_0/RMSNORM_model_layers_0_input_layernorm/input.bin");
+    sprintf(filename[0],  "./wall_oss/model_layers_%d/RMSNORM_model_layers_%d_input_layernorm/input.bin", index, index);
+    printf("%s\n", filename[0]);
+    struct bin_inf* ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*hidden_dim,  filename[0]);
     struct bin_inf* ln0_weight_bin_inf   = get_bin_inf(0, 1*hidden_dim,            "./wall_oss/model_layers_0/RMSNORM_model_layers_0_input_layernorm/weight.bin");
     struct bin_inf* ln0_bias_bin_inf     = get_bin_inf(0, hidden_dim,              "./rw_data/bn_and_k_bias_0.bin");
     // Output bin_inf
@@ -137,26 +318,10 @@ int __cdecl main()
         /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 2048,
         /*DAT_IN_A_BASE_ADDR*/ runtime2, /*DAT_IN_B_BASE_ADDR*/ runtime1, /*DAT_OUT_BASE_ADDR*/ runtime0
     );
-
-    // // Input bin_inf
-    // struct bin_inf* elementwise2_dat_in_A_bin_inf  = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/ELEMENTWISE2_input.bin");
-    // struct bin_inf* elementwise2_dat_in_B_bin_inf  = get_bin_inf(0, 22*1*4096, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE2/residual.bin");
-    // // Output bin_inf
-    // struct bin_inf* *elementwise2_dat_in_A_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    // struct bin_inf* *elementwise2_dat_in_B_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-
-    // // Transform data
-    // HBM_elementwise_test(cfg_elementwise2, "BLOCK_write_data/BLOCK00", "ELEMENTWISE2", elementwise2_dat_in_A_bin_inf, elementwise2_dat_in_B_bin_inf, elementwise2_dat_in_A_HBM_inf, ENABLE, elementwise2_dat_in_B_HBM_inf, ENABLE);
-
-    // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_A_HBM_inf, group);
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise2_dat_in_B_HBM_inf, group);
-
-    // Write command to FPGA
-    // elementwise_step_29(user_device, run_token);
-
     // Read output data from FPGA and compare
-    struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         "./wall_oss/model_layers_1/RMSNORM_model_layers_1_input_layernorm/input.bin");
+    sprintf(filename[0],  "./wall_oss/model_layers_%d/RMSNORM_model_layers_%d_input_layernorm/input.bin", end_index+1, end_index+1);
+    printf("%s\n", filename[0]);
+    struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         filename[0]);
     HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "wall_oss_run/model_layers_0", "ELEMENTWISE2", elementwise2_golden_out_bin_inf);
 
     // Malloc free

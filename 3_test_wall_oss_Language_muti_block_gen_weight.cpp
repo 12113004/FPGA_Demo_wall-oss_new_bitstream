@@ -236,7 +236,6 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
     // Input bin_inf
     sprintf(filename[1], "./wall_oss/model_layers_%d/LINEAR_model_layers_%d_self_attn_o_proj/weight_int4.bin",  index, index);
     sprintf(filename[2], "./wall_oss/model_layers_%d/LINEAR_model_layers_%d_self_attn_o_proj/scale.bin",        index, index);
-    sprintf(filename[3], "./wall_oss/model_layers_%d/LINEAR_model_layers_%d_self_attn_o_proj/bias.bin",         index, index);
     // struct bin_inf* mvmbn1_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,            "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/input.bin");
     // struct bin_inf* mvmbn1_weight_bin_inf = get_bin_inf(0, 4096*4096,            "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/weight_int4.bin"); 
     // struct bin_inf* mvmbn1_scales_bin_inf = get_bin_inf(0, 32*4096,              "./wall_oss/model_layers_0/LINEAR_model_layers_0_self_attn_o_proj/scale.bin");
@@ -246,7 +245,7 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
     struct bin_inf* mvmbn1_weight_bin_inf = get_bin_inf(0, 4096*4096,            filename[1]);
     struct bin_inf* mvmbn1_scales_bin_inf = get_bin_inf(0, 32*4096,              filename[2]);
     struct bin_inf* mvmbn1_wt_bin_inf     = get_bin_inf(0, 4096,                 "./rw_data/bn_wt_1.bin");
-    struct bin_inf* mvmbn1_bias_bin_inf   = get_bin_inf(0, 4096,                 filename[3]);
+    struct bin_inf* mvmbn1_bias_bin_inf   = get_bin_inf(0, 4096,                 "./rw_data/bn_and_k_bias_0.bin");
     // Output bin_inf
     struct bin_inf* *mvmbn1_wt_and_scale_in_HBM_inf   = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *mvmbn1_dat_in_HBM_inf            = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
@@ -482,7 +481,7 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
 
 int __cdecl main(int argc, char* argv[])
 {
-    int  model_part      = 1;
+    int  model_part      = 0;
     if (argc > 1) {
         model_part = atoi(argv[1]);
     }
@@ -628,6 +627,22 @@ int __cdecl main(int argc, char* argv[])
         // 31
         case 33:
             generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK31", 31);
+        break;
+        // 32
+        case 34:
+        generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK32", 32);
+        break;
+        // 33
+        case 35:
+        generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK33", 33);
+        break;
+        // 34
+        case 36:
+        generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK34", 34);
+        break;
+        // 35
+        case 37:
+        generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK35", 35);
         break;
         default:;
         break;

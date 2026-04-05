@@ -71353,6 +71353,7 @@ void elementwise_step_1044(HANDLE& device, int token) {
 }
 
 void test(HANDLE& device, int token, int last_token) {
+  #ifdef BLOCK_0
   norm_step_1(device, token);
   mvm_f16xi4_step_2(device, token);
   rope_step_3(device, token, last_token);
@@ -71382,6 +71383,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_27(device);
   elementwise_step_28(device, token);
   elementwise_step_29(device, token);
+  #endif
+
+  #ifdef BLOCK_1
   norm_step_30(device, token);
   mvm_f16xi4_step_31(device, token);
   rope_step_32(device, token, last_token);
@@ -71411,6 +71415,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_56(device);
   elementwise_step_57(device, token);
   elementwise_step_58(device, token);
+  #endif
+
+  #ifdef BLOCK_2
   norm_step_59(device, token);
   mvm_f16xi4_step_60(device, token);
   rope_step_61(device, token, last_token);
@@ -71440,6 +71447,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_85(device);
   elementwise_step_86(device, token);
   elementwise_step_87(device, token);
+  #endif
+
+  #ifdef BLOCK_3
   norm_step_88(device, token);
   mvm_f16xi4_step_89(device, token);
   rope_step_90(device, token, last_token);
@@ -71469,6 +71479,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_114(device);
   elementwise_step_115(device, token);
   elementwise_step_116(device, token);
+  #endif
+
+  #ifdef BLOCK_4
   norm_step_117(device, token);
   mvm_f16xi4_step_118(device, token);
   rope_step_119(device, token, last_token);
@@ -71498,6 +71511,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_143(device);
   elementwise_step_144(device, token);
   elementwise_step_145(device, token);
+  #endif
+
+  #ifdef BLOCK_5
   norm_step_146(device, token);
   mvm_f16xi4_step_147(device, token);
   rope_step_148(device, token, last_token);
@@ -71527,6 +71543,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_172(device);
   elementwise_step_173(device, token);
   elementwise_step_174(device, token);
+  #endif
+
+  #ifdef BLOCK_6
   norm_step_175(device, token);
   mvm_f16xi4_step_176(device, token);
   rope_step_177(device, token, last_token);
@@ -71556,6 +71575,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_201(device);
   elementwise_step_202(device, token);
   elementwise_step_203(device, token);
+  #endif
+
+  #ifdef BLOCK_7
   norm_step_204(device, token);
   mvm_f16xi4_step_205(device, token);
   rope_step_206(device, token, last_token);
@@ -71585,6 +71607,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_230(device);
   elementwise_step_231(device, token);
   elementwise_step_232(device, token);
+  #endif
+
+  #ifdef BLOCK_8
   norm_step_233(device, token);
   mvm_f16xi4_step_234(device, token);
   rope_step_235(device, token, last_token);
@@ -71614,6 +71639,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_259(device);
   elementwise_step_260(device, token);
   elementwise_step_261(device, token);
+  #endif
+
+  #ifdef BLOCK_9
   norm_step_262(device, token);
   mvm_f16xi4_step_263(device, token);
   rope_step_264(device, token, last_token);
@@ -71643,6 +71671,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_288(device);
   elementwise_step_289(device, token);
   elementwise_step_290(device, token);
+  #endif
+
+  #ifdef BLOCK_10
   norm_step_291(device, token);
   mvm_f16xi4_step_292(device, token);
   rope_step_293(device, token, last_token);
@@ -71672,6 +71703,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_317(device);
   elementwise_step_318(device, token);
   elementwise_step_319(device, token);
+  #endif
+
+  #ifdef BLOCK_11
   norm_step_320(device, token);
   mvm_f16xi4_step_321(device, token);
   rope_step_322(device, token, last_token);
@@ -71701,6 +71735,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_346(device);
   elementwise_step_347(device, token);
   elementwise_step_348(device, token);
+  #endif
+
+  #ifdef BLOCK_12
   norm_step_349(device, token);
   mvm_f16xi4_step_350(device, token);
   rope_step_351(device, token, last_token);
@@ -71730,6 +71767,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_375(device);
   elementwise_step_376(device, token);
   elementwise_step_377(device, token);
+  #endif
+
+  #ifdef BLOCK_13
   norm_step_378(device, token);
   mvm_f16xi4_step_379(device, token);
   rope_step_380(device, token, last_token);
@@ -71759,6 +71799,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_404(device);
   elementwise_step_405(device, token);
   elementwise_step_406(device, token);
+  #endif
+
+  #ifdef BLOCK_14
   norm_step_407(device, token);
   mvm_f16xi4_step_408(device, token);
   rope_step_409(device, token, last_token);
@@ -71788,6 +71831,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_433(device);
   elementwise_step_434(device, token);
   elementwise_step_435(device, token);
+  #endif
+
+  #ifdef BLOCK_15
   norm_step_436(device, token);
   mvm_f16xi4_step_437(device, token);
   rope_step_438(device, token, last_token);
@@ -71817,6 +71863,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_462(device);
   elementwise_step_463(device, token);
   elementwise_step_464(device, token);
+  #endif
+
+  #ifdef BLOCK_16
   norm_step_465(device, token);
   mvm_f16xi4_step_466(device, token);
   rope_step_467(device, token, last_token);
@@ -71846,6 +71895,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_491(device);
   elementwise_step_492(device, token);
   elementwise_step_493(device, token);
+  #endif
+
+  #ifdef BLOCK_17
   norm_step_494(device, token);
   mvm_f16xi4_step_495(device, token);
   rope_step_496(device, token, last_token);
@@ -71875,6 +71927,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_520(device);
   elementwise_step_521(device, token);
   elementwise_step_522(device, token);
+  #endif
+
+  #ifdef BLOCK_18
   norm_step_523(device, token);
   mvm_f16xi4_step_524(device, token);
   rope_step_525(device, token, last_token);
@@ -71904,6 +71959,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_549(device);
   elementwise_step_550(device, token);
   elementwise_step_551(device, token);
+  #endif
+
+  #ifdef BLOCK_19
   norm_step_552(device, token);
   mvm_f16xi4_step_553(device, token);
   rope_step_554(device, token, last_token);
@@ -71933,6 +71991,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_578(device);
   elementwise_step_579(device, token);
   elementwise_step_580(device, token);
+  #endif
+
+  #ifdef BLOCK_20
   norm_step_581(device, token);
   mvm_f16xi4_step_582(device, token);
   rope_step_583(device, token, last_token);
@@ -71962,6 +72023,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_607(device);
   elementwise_step_608(device, token);
   elementwise_step_609(device, token);
+  #endif
+
+  #ifdef BLOCK_21
   norm_step_610(device, token);
   mvm_f16xi4_step_611(device, token);
   rope_step_612(device, token, last_token);
@@ -71991,6 +72055,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_636(device);
   elementwise_step_637(device, token);
   elementwise_step_638(device, token);
+  #endif
+
+  #ifdef BLOCK_22
   norm_step_639(device, token);
   mvm_f16xi4_step_640(device, token);
   rope_step_641(device, token, last_token);
@@ -72020,6 +72087,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_665(device);
   elementwise_step_666(device, token);
   elementwise_step_667(device, token);
+  #endif
+
+  #ifdef BLOCK_23
   norm_step_668(device, token);
   mvm_f16xi4_step_669(device, token);
   rope_step_670(device, token, last_token);
@@ -72049,6 +72119,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_694(device);
   elementwise_step_695(device, token);
   elementwise_step_696(device, token);
+  #endif
+
+  #ifdef BLOCK_24
   norm_step_697(device, token);
   mvm_f16xi4_step_698(device, token);
   rope_step_699(device, token, last_token);
@@ -72078,6 +72151,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_723(device);
   elementwise_step_724(device, token);
   elementwise_step_725(device, token);
+  #endif
+
+  #ifdef BLOCK_25
   norm_step_726(device, token);
   mvm_f16xi4_step_727(device, token);
   rope_step_728(device, token, last_token);
@@ -72107,6 +72183,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_752(device);
   elementwise_step_753(device, token);
   elementwise_step_754(device, token);
+  #endif
+
+  #ifdef BLOCK_26
   norm_step_755(device, token);
   mvm_f16xi4_step_756(device, token);
   rope_step_757(device, token, last_token);
@@ -72136,6 +72215,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_781(device);
   elementwise_step_782(device, token);
   elementwise_step_783(device, token);
+  #endif
+
+  #ifdef BLOCK_27
   norm_step_784(device, token);
   mvm_f16xi4_step_785(device, token);
   rope_step_786(device, token, last_token);
@@ -72165,6 +72247,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_810(device);
   elementwise_step_811(device, token);
   elementwise_step_812(device, token);
+  #endif
+
+  #ifdef BLOCK_28
   norm_step_813(device, token);
   mvm_f16xi4_step_814(device, token);
   rope_step_815(device, token, last_token);
@@ -72194,6 +72279,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_839(device);
   elementwise_step_840(device, token);
   elementwise_step_841(device, token);
+  #endif
+
+  #ifdef BLOCK_29
   norm_step_842(device, token);
   mvm_f16xi4_step_843(device, token);
   rope_step_844(device, token, last_token);
@@ -72223,6 +72311,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_868(device);
   elementwise_step_869(device, token);
   elementwise_step_870(device, token);
+  #endif
+
+  #ifdef BLOCK_30
   norm_step_871(device, token);
   mvm_f16xi4_step_872(device, token);
   rope_step_873(device, token, last_token);
@@ -72252,6 +72343,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_897(device);
   elementwise_step_898(device, token);
   elementwise_step_899(device, token);
+  #endif
+
+  #ifdef BLOCK_31
   norm_step_900(device, token);
   mvm_f16xi4_step_901(device, token);
   rope_step_902(device, token, last_token);
@@ -72281,6 +72375,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_926(device);
   elementwise_step_927(device, token);
   elementwise_step_928(device, token);
+  #endif
+
+  #ifdef BLOCK_32
   norm_step_929(device, token);
   mvm_f16xi4_step_930(device, token);
   rope_step_931(device, token, last_token);
@@ -72310,6 +72407,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_955(device);
   elementwise_step_956(device, token);
   elementwise_step_957(device, token);
+  #endif
+
+  #ifdef BLOCK_33
   norm_step_958(device, token);
   mvm_f16xi4_step_959(device, token);
   rope_step_960(device, token, last_token);
@@ -72339,6 +72439,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_984(device);
   elementwise_step_985(device, token);
   elementwise_step_986(device, token);
+  #endif
+
+  #ifdef BLOCK_34
   norm_step_987(device, token);
   mvm_f16xi4_step_988(device, token);
   rope_step_989(device, token, last_token);
@@ -72368,6 +72471,9 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_1013(device);
   elementwise_step_1014(device, token);
   elementwise_step_1015(device, token);
+  #endif
+
+  #ifdef BLOCK_35
   norm_step_1016(device, token);
   mvm_f16xi4_step_1017(device, token);
   rope_step_1018(device, token, last_token);
@@ -72397,4 +72503,6 @@ void test(HANDLE& device, int token, int last_token) {
   elementwise_step_1042(device);
   elementwise_step_1043(device, token);
   elementwise_step_1044(device, token);
+  #endif
+
 }
