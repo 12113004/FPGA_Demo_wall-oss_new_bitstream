@@ -7,41 +7,43 @@ using namespace std;
 #include "./xdma_lib/read_file.cpp"
 #include "./xdma_lib/rt_lib.h"
 
+#define LOAD_WEIGHT
+
 #define BLOCK_0
-#define BLOCK_1
-#define BLOCK_2
-#define BLOCK_3
-#define BLOCK_4
-#define BLOCK_5
-#define BLOCK_6
-#define BLOCK_7
-#define BLOCK_8
-#define BLOCK_9
-#define BLOCK_10
-#define BLOCK_11
-#define BLOCK_12
-#define BLOCK_13
-#define BLOCK_14
-#define BLOCK_15
-#define BLOCK_16
-#define BLOCK_17
-#define BLOCK_18
-#define BLOCK_19
-#define BLOCK_20
-#define BLOCK_21
-#define BLOCK_22
-#define BLOCK_23
-#define BLOCK_24
-#define BLOCK_25
-#define BLOCK_26
-#define BLOCK_27
-#define BLOCK_28
-#define BLOCK_29
-#define BLOCK_30
-#define BLOCK_31
-#define BLOCK_32
-#define BLOCK_33
-#define BLOCK_34
+// #define BLOCK_1
+// #define BLOCK_2
+// #define BLOCK_3
+// #define BLOCK_4
+// #define BLOCK_5
+// #define BLOCK_6
+// #define BLOCK_7
+// #define BLOCK_8
+// #define BLOCK_9
+// #define BLOCK_10
+// #define BLOCK_11
+// #define BLOCK_12
+// #define BLOCK_13
+// #define BLOCK_14
+// #define BLOCK_15
+// #define BLOCK_16
+// #define BLOCK_17
+// #define BLOCK_18
+// #define BLOCK_19
+// #define BLOCK_20
+// #define BLOCK_21
+// #define BLOCK_22
+// #define BLOCK_23
+// #define BLOCK_24
+// #define BLOCK_25
+// #define BLOCK_26
+// #define BLOCK_27
+// #define BLOCK_28
+// #define BLOCK_29
+// #define BLOCK_30
+// #define BLOCK_31
+// #define BLOCK_32
+// #define BLOCK_33
+// #define BLOCK_34
 // #define BLOCK_35
 
 // 全局变量 index
@@ -254,33 +256,35 @@ void set_block_end_index(void)
 
 int __cdecl main()
 {
-   //****************************** open device ****************************// 
-   HANDLE user_device;
-   HANDLE bypass_device;
-   HANDLE c2hx_device[NUM_OF_RW_CH];
-   HANDLE h2cx_device[NUM_OF_RW_CH];   
-   open_device(&user_device, &bypass_device, &c2hx_device[0], &h2cx_device[0]);
-   //****************************** open device ****************************//
-   LARGE_INTEGER start_cfg;
-   LARGE_INTEGER stop_cfg;
-   LARGE_INTEGER start_run;
-   LARGE_INTEGER stop_run;
-   LARGE_INTEGER freq;
-   double time_sec0;
-   
-   
-   int run_token    = 254;
-   int last_token   = 0;
-   int hidden_dim   = 2048;
-   int kvcache_mode = (run_token-last_token == 1)? 1 : 0;
+    //****************************** open device ****************************// 
+    HANDLE user_device;
+    HANDLE bypass_device;
+    HANDLE c2hx_device[NUM_OF_RW_CH];
+    HANDLE h2cx_device[NUM_OF_RW_CH];   
+    open_device(&user_device, &bypass_device, &c2hx_device[0], &h2cx_device[0]);
+    //****************************** open device ****************************//
+    LARGE_INTEGER start_cfg;
+    LARGE_INTEGER stop_cfg;
+    LARGE_INTEGER start_run;
+    LARGE_INTEGER stop_run;
+    LARGE_INTEGER freq;
+    double time_sec0;
+    
+    
+    int run_token    = 254;
+    int last_token   = 0;
+    int hidden_dim   = 2048;
+    int kvcache_mode = (run_token-last_token == 1)? 1 : 0;
 
-   char** filename = (char**)malloc(sizeof(char*)*4);
-   for(int i=0;i<4;i++)
-       filename[i] = (char*)malloc(sizeof(char)*200);
-   set_block_index();
-   set_block_end_index();
+    char** filename = (char**)malloc(sizeof(char*)*4);
+    for(int i=0;i<4;i++)
+        filename[i] = (char*)malloc(sizeof(char)*200);
+    set_block_index();
+    set_block_end_index();
 
-//    test_load_params(h2cx_device[0], ".");
+#ifdef LOAD_WEIGHT
+    test_load_params(h2cx_device[0], ".");
+#endif
 
 #ifdef STEP_LN0
     // ******************************** STEP1 - LN0 ******************************** //

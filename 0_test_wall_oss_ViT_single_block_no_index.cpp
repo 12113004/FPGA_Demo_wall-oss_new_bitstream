@@ -17,7 +17,7 @@ using namespace std;
 // #include "./rw_cmd/wall_oss_debug_0321_1724.h"                      // ATTEN_DONE
 // #include "./rw_cmd/wall_oss_debug_0322_1429.h"                      // working with O input head = 16
 // #include "./rw_cmd/wall_oss_debug_0322_1602.h"                      // MLP
-#include "./rw_cmd/wall_oss_debug_0322_2204.h" 
+#include "./rw_cmd/wall_oss_debug_0324_0005.h" 
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
@@ -424,8 +424,8 @@ int __cdecl main()
     softmax_step_10(user_device, run_token, last_token);
 
     // Read output data from FPGA and compare
-    // struct bin_inf* softmax_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/SOFTMAX/output.bin");
-    // HBM_softmax_receive_and_compare(cfg_softmax, c2hx_device[0], "wall_oss_run/blocks_0", "SOFTMAX", softmax_golden_out_bin_inf);
+    struct bin_inf* softmax_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/blocks_0/SOFTMAX/output.bin");
+    HBM_softmax_receive_and_compare(cfg_softmax, c2hx_device[0], "wall_oss_run/blocks_0", "SOFTMAX", softmax_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(softmax_dat_in_bin_inf);
@@ -536,8 +536,8 @@ int __cdecl main()
     mvm_f16xf16_step_13(user_device, run_token, last_token);
 
     // Read output data from FPGA and compare
-    // struct bin_inf* f2w_golden_out_bin_inf = get_bin_inf(0, 32*22*128, "./wall_oss/blocks_0/F2W/attn_output.bin");
-    // HBM_f2w_receive_and_compare(cfg_f2w, c2hx_device[0], "wall_oss_run/blocks_0", "F2W", f2w_golden_out_bin_inf);
+    struct bin_inf* f2w_golden_out_bin_inf = get_bin_inf(0, 32*22*128, "./wall_oss/blocks_0/F2W/attn_output.bin");
+    HBM_f2w_receive_and_compare(cfg_f2w, c2hx_device[0], "wall_oss_run/blocks_0", "F2W", f2w_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(f2w_dat_in_bin_inf);
@@ -742,7 +742,7 @@ int __cdecl main()
 
     // Read output data from FPGA and compare
     struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0,          "./wall_oss/blocks_0/ACT/output.bin");
-    HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "BLOCK_read_data", "ACT", act_golden_out_bin_inf);
+    HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "wall_oss_run/blocks_0", "ACT", act_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(act_dat_in_bin_inf );
@@ -784,7 +784,7 @@ int __cdecl main()
 
     // Read output data from FPGA and compare
     struct bin_inf* mvmbn3_golden_out_bin_inf = get_bin_inf(0, 22*1*4096, "./wall_oss/blocks_0/LINEAR_visual_blocks_0_mlp_up_proj/output.bin");
-    HBM_mvmbn_receive_and_compare(cfg_mvmbn3, c2hx_device[0], "BLOCK_read_data", "MVMBN3", mvmbn3_golden_out_bin_inf);
+    HBM_mvmbn_receive_and_compare(cfg_mvmbn3, c2hx_device[0], "wall_oss_run/blocks_0", "MVMBN3", mvmbn3_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(mvmbn3_dat_in_bin_inf);
@@ -799,40 +799,40 @@ int __cdecl main()
 #endif
 
 #ifdef STEP_ELEMENTWISE1
-    // // ******************************** STEP20 ELEMENTWISE1 ******************************** //
-    // // Parameter Config
-    // struct FPGA_HBM_ELEMENTWISE_cfg cfg_elementwise1 = GetFPGA_HBM_ELEMENTWISE_cfg(
-    //     /*Height*/ 22, /*Hin*/ 1, /*Width_in*/ 12288,
-    //     /*DAT_IN_A_BASE_ADDR*/ runtime3, /*DAT_IN_B_BASE_ADDR*/ runtime2, /*DAT_OUT_BASE_ADDR*/ runtime0
-    // );
+    // ******************************** STEP20 ELEMENTWISE1 ******************************** //
+    // Parameter Config
+    struct FPGA_HBM_ELEMENTWISE_cfg cfg_elementwise1 = GetFPGA_HBM_ELEMENTWISE_cfg(
+        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 3456,
+        /*DAT_IN_A_BASE_ADDR*/ runtime2, /*DAT_IN_B_BASE_ADDR*/ runtime3, /*DAT_OUT_BASE_ADDR*/ runtime1
+    );
 
-    // // Input bin_inf
-    // struct bin_inf* elementwise1_dat_in_A_bin_inf  = get_bin_inf(0, 22*1*12288, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE1/ELEMENTWISE1_input1.bin");
-    // struct bin_inf* elementwise1_dat_in_B_bin_inf  = get_bin_inf(0, 22*1*12288, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE1/ELEMENTWISE1_input2.bin");
-    // // Output bin_inf
-    // struct bin_inf* *elementwise1_dat_in_A_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    // struct bin_inf* *elementwise1_dat_in_B_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // Input bin_inf
+    struct bin_inf* elementwise1_dat_in_A_bin_inf  = get_bin_inf(0, 22*1*12288, "./wall_oss/blocks_0/ACT/output.bin");
+    struct bin_inf* elementwise1_dat_in_B_bin_inf  = get_bin_inf(0, 22*1*12288, "./wall_oss/blocks_0/LINEAR_visual_blocks_0_mlp_up_proj/output.bin");
+    // Output bin_inf
+    struct bin_inf* *elementwise1_dat_in_A_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *elementwise1_dat_in_B_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
-    // // Transform data
-    // HBM_elementwise_test(cfg_elementwise1, "BLOCK_write_data/BLOCK00", "ELEMENTWISE1", elementwise1_dat_in_A_bin_inf, elementwise1_dat_in_B_bin_inf, elementwise1_dat_in_A_HBM_inf, ENABLE, elementwise1_dat_in_B_HBM_inf, ENABLE);
+    // Transform data
+    HBM_elementwise_test(cfg_elementwise1, "wall_oss_run/blocks_0", "ELEMENTWISE1", elementwise1_dat_in_A_bin_inf, elementwise1_dat_in_B_bin_inf, elementwise1_dat_in_A_HBM_inf, ENABLE, elementwise1_dat_in_B_HBM_inf, ENABLE);
 
-    // // Write data to FPGA
-    // // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise1_dat_in_A_HBM_inf, group);
-    // // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise1_dat_in_B_HBM_inf, group);
+    // Write data to FPGA
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise1_dat_in_A_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], elementwise1_dat_in_B_HBM_inf, group);
 
     // Write command to FPGA
     elementwise_step_20(user_device, run_token);
 
-    // // Read output data from FPGA and compare
-    // struct bin_inf* elementwise1_golden_out_bin_inf = get_bin_inf(0, 22*1*12288, "./qwen3_data/Qwen3_xiao/test_ELEMENTWISE1/ELEMENTWISE1_output.bin");
-    // // HBM_elementwise_receive_and_compare(cfg_elementwise1, c2hx_device[0], "BLOCK_read_data", "ELEMENTWISE1", elementwise1_golden_out_bin_inf);
+    // Read output data from FPGA and compare
+    struct bin_inf* elementwise1_golden_out_bin_inf = get_bin_inf(0, 22*1*12288, "./wall_oss/blocks_0/LINEAR_visual_blocks_0_mlp_down_proj/input.bin");
+    HBM_elementwise_receive_and_compare(cfg_elementwise1, c2hx_device[0], "wall_oss_run/blocks_0", "ELEMENTWISE1", elementwise1_golden_out_bin_inf);
 
-    // // Malloc free
-    // bin_inf_malloc_free(elementwise1_dat_in_A_bin_inf);
-    // bin_inf_malloc_free(elementwise1_dat_in_B_bin_inf);
-    // bin_inf_malloc_free(elementwise1_golden_out_bin_inf);
-    // HBM_bin_inf_malloc_free(elementwise1_dat_in_A_HBM_inf, group);
-    // HBM_bin_inf_malloc_free(elementwise1_dat_in_B_HBM_inf, group);
+    // Malloc free
+    bin_inf_malloc_free(elementwise1_dat_in_A_bin_inf);
+    bin_inf_malloc_free(elementwise1_dat_in_B_bin_inf);
+    bin_inf_malloc_free(elementwise1_golden_out_bin_inf);
+    HBM_bin_inf_malloc_free(elementwise1_dat_in_A_HBM_inf, group);
+    HBM_bin_inf_malloc_free(elementwise1_dat_in_B_HBM_inf, group);
 #endif 
 
 #ifdef STEP_MVMBN4
