@@ -44,9 +44,9 @@ using namespace std;
 // step switch
 
 // #define STEP_LN0
-#define STEP_MVMBN0
+// #define STEP_MVMBN0
 // #define STEP_ACT
-// #define STEP_MVMBN2
+#define STEP_MVMBN2
 
 // #define STEP_LN_Outlayer
 // #define STEP_MVMBN_Argmax
@@ -165,29 +165,29 @@ int __cdecl main()
     // ******************************** STEP18 - ACT ******************************** //
     // Parameter Config
     struct FPGA_HBM_ACT_cfg cfg_act = GetFPGA_HBM_ACT_cfg(
-        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 11008,
-        /*DAT_IN_BASE_ADDR*/ runtime2, /*WT_BASE_ADDR*/ hbm14, /*DAT_OUT_BASE_ADDR*/ runtime3
+        /*Height*/ run_token/4, /*Hin*/ 1, /*Width_in*/ hidden_dim*4,
+        /*DAT_IN_BASE_ADDR*/ runtime0, /*WT_BASE_ADDR*/ hbm3, /*DAT_OUT_BASE_ADDR*/ runtime1
     );
 
     // Input bin_inf
-    struct bin_inf* act_dat_in_bin_inf = get_bin_inf(0, 22*1*12288,         "./wall_oss/Merger/E0_ACT/output.bin");
+    struct bin_inf* act_dat_in_bin_inf = get_bin_inf(0, 22*1*12288,         "./wall_oss/LINEAR_visual_merger_mlp_0/output.bin");
     // Output bin_inf
     struct bin_inf* *act_dat_in_HBM_inf       = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *act_parameter_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group/32);
 
     // Transform data
-    HBM_act_test(cfg_act, "wall_oss_run/Merger", "E0_ACT", act_dat_in_bin_inf, act_dat_in_HBM_inf, ENABLE, act_parameter_in_HBM_inf, ENABLE);
+    HBM_act_test(cfg_act, "wall_oss_run/Merger", "GELU", act_dat_in_bin_inf, act_dat_in_HBM_inf, ENABLE, act_parameter_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_parameter_in_HBM_inf, group/32);
 
     // Write command to FPGA
-    activate_step_17(user_device, run_token);
+    activate_step_3(user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0,          "./wall_oss/Merger/E0_ACT/output.bin");
-    HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "wall_oss_run/Merger", "E0_ACT", act_golden_out_bin_inf);
+    struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0,          "./wall_oss/LINEAR_visual_merger_mlp_2/input.bin");
+    HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "wall_oss_run/Merger", "GELU", act_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(act_dat_in_bin_inf );
@@ -200,36 +200,36 @@ int __cdecl main()
     // ******************************** STEP19 - MVMBN3 ******************************** //
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn3 = GetFPGA_HBM_MVM_BN_cfg(
-        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 2048, /*Width_out*/ 11008,
-        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm15, /*BN_BASE_ADDR*/ hbm16, /*DAT_OUT_BASE_ADDR*/ runtime2
+        /*Height*/ run_token/4, /*Hin*/ 1, /*Width_in*/ hidden_dim*4, /*Width_out*/ 2048,
+        /*DAT_IN_BASE_ADDR*/ runtime1, /*HBM00_WT_BASE_ADDR*/ hbm4, /*BN_BASE_ADDR*/ hbm5, /*DAT_OUT_BASE_ADDR*/ runtime0
     );
 
     // Input bin_inf
-    struct bin_inf* mvmbn3_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/input.bin");
-    struct bin_inf* mvmbn3_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/weight_int4.bin"); 
-    struct bin_inf* mvmbn3_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/scale.bin");
+    struct bin_inf* mvmbn3_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/LINEAR_visual_merger_mlp_2/input.bin");
+    struct bin_inf* mvmbn3_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/LINEAR_visual_merger_mlp_2/weight_int4.bin"); 
+    struct bin_inf* mvmbn3_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/LINEAR_visual_merger_mlp_2/scale.bin");
     struct bin_inf* mvmbn3_wt_bin_inf     = get_bin_inf(0, 12288,            "./rw_data/bn_wt_1.bin");
-    struct bin_inf* mvmbn3_bias_bin_inf   = get_bin_inf(0, 12288,            "./rw_data/bn_and_k_bias_0.bin");
+    struct bin_inf* mvmbn3_bias_bin_inf   = get_bin_inf(0, 12288,            "./wall_oss/LINEAR_visual_merger_mlp_2/bias.bin");
     // Output bin_inf
     struct bin_inf* *mvmbn3_wt_and_scale_in_HBM_inf   = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *mvmbn3_dat_in_HBM_inf            = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *mvmbn3_bn_wt_and_bias_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
     // Transform data
-    HBM_mvmbn_test(cfg_mvmbn3, "wall_oss_run/Merger", "E0_MVMBN3", mvmbn3_weight_bin_inf, mvmbn3_scales_bin_inf, mvmbn3_dat_in_bin_inf, mvmbn3_wt_bin_inf, mvmbn3_bias_bin_inf,
+    HBM_mvmbn_test(cfg_mvmbn3, "wall_oss_run/Merger", "MVMBN3", mvmbn3_weight_bin_inf, mvmbn3_scales_bin_inf, mvmbn3_dat_in_bin_inf, mvmbn3_wt_bin_inf, mvmbn3_bias_bin_inf,
                     mvmbn3_wt_and_scale_in_HBM_inf, ENABLE, mvmbn3_dat_in_HBM_inf, ENABLE, mvmbn3_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_wt_and_scale_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_bn_wt_and_bias_in_HBM_inf, group);
 
     // Write command to FPGA
-    mvm_f16xi4_step_18(user_device, run_token);
+    mvm_f16xi4_step_4(user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* mvmbn3_golden_out_bin_inf = get_bin_inf(0, 22*1*4096, "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/output.bin");
-    HBM_mvmbn_receive_and_compare(cfg_mvmbn3, c2hx_device[0], "wall_oss_run/Merger", "E0_MVMBN3", mvmbn3_golden_out_bin_inf);
+    struct bin_inf* mvmbn3_golden_out_bin_inf = get_bin_inf(0, 22*1*4096, "./wall_oss/LINEAR_visual_merger_mlp_2/output.bin");
+    HBM_mvmbn_receive_and_compare(cfg_mvmbn3, c2hx_device[0], "wall_oss_run/Merger", "MVMBN3", mvmbn3_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(mvmbn3_dat_in_bin_inf);
