@@ -43,8 +43,8 @@ using namespace std;
 
 // step switch
 
-#define STEP_LN0
-// #define STEP_MVMBN0
+// #define STEP_LN0
+#define STEP_MVMBN0
 // #define STEP_ACT
 // #define STEP_MVMBN2
 
@@ -115,39 +115,39 @@ int __cdecl main()
 #endif
 
 #ifdef STEP_MVMBN0
-    // ******************************** STEP17 - MVMBN2 ******************************** //
+    // ******************************** STEP1 - MVMBN0 ******************************** //
     // Parameter Config
     struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn2 = GetFPGA_HBM_MVM_BN_cfg(
-        /*Height*/ run_token, /*Hin*/ 1, /*Width_in*/ 2048, /*Width_out*/ 11008,
-        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm12, /*BN_BASE_ADDR*/ hbm13, /*DAT_OUT_BASE_ADDR*/ runtime2
+        /*Height*/ run_token/4, /*Hin*/ 1, /*Width_in*/ hidden_dim*4, /*Width_out*/ hidden_dim*4,
+        /*DAT_IN_BASE_ADDR*/ runtime1, /*HBM00_WT_BASE_ADDR*/ hbm1, /*BN_BASE_ADDR*/ hbm2, /*DAT_OUT_BASE_ADDR*/ runtime0
     );
 
     // Input bin_inf
-    struct bin_inf* mvmbn2_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_gate_proj/input.bin");
-    struct bin_inf* mvmbn2_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_gate_proj/weight_int4.bin"); 
-    struct bin_inf* mvmbn2_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_gate_proj/scale.bin");
+    struct bin_inf* mvmbn2_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/LINEAR_visual_merger_mlp_0/input.bin");
+    struct bin_inf* mvmbn2_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/LINEAR_visual_merger_mlp_0/weight_int4.bin"); 
+    struct bin_inf* mvmbn2_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/LINEAR_visual_merger_mlp_0/scale.bin");
     struct bin_inf* mvmbn2_wt_bin_inf     = get_bin_inf(0, 12288,            "./rw_data/bn_wt_1.bin");
-    struct bin_inf* mvmbn2_bias_bin_inf   = get_bin_inf(0, 12288,            "./rw_data/bn_and_k_bias_0.bin");
+    struct bin_inf* mvmbn2_bias_bin_inf   = get_bin_inf(0, 12288,            "./wall_oss/LINEAR_visual_merger_mlp_0/bias.bin");
     // Output bin_inf
     struct bin_inf* *mvmbn2_wt_and_scale_in_HBM_inf   = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *mvmbn2_dat_in_HBM_inf            = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *mvmbn2_bn_wt_and_bias_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
     // Transform data
-    HBM_mvmbn_test(cfg_mvmbn2, "wall_oss_run/model_layers_0", "E0_MVMBN2", mvmbn2_weight_bin_inf, mvmbn2_scales_bin_inf, mvmbn2_dat_in_bin_inf, mvmbn2_wt_bin_inf, mvmbn2_bias_bin_inf,
+    HBM_mvmbn_test(cfg_mvmbn2, "wall_oss_run/Merger", "MVMBN2", mvmbn2_weight_bin_inf, mvmbn2_scales_bin_inf, mvmbn2_dat_in_bin_inf, mvmbn2_wt_bin_inf, mvmbn2_bias_bin_inf,
                     mvmbn2_wt_and_scale_in_HBM_inf, ENABLE, mvmbn2_dat_in_HBM_inf, ENABLE, mvmbn2_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_wt_and_scale_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn2_bn_wt_and_bias_in_HBM_inf, group);
 
     // Write command to FPGA
-    mvm_f16xi4_step_16(user_device, run_token);
+    mvm_f16xi4_step_2(user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* mvmbn2_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_gate_proj/output.bin");
-    HBM_mvmbn_receive_and_compare(cfg_mvmbn2, c2hx_device[0], "wall_oss_run/model_layers_0", "E0_MVMBN2", mvmbn2_golden_out_bin_inf);
+    struct bin_inf* mvmbn2_golden_out_bin_inf = get_bin_inf(0, 0, "./wall_oss/LINEAR_visual_merger_mlp_0/output.bin");
+    HBM_mvmbn_receive_and_compare(cfg_mvmbn2, c2hx_device[0], "wall_oss_run/Merger", "MVMBN2", mvmbn2_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(mvmbn2_dat_in_bin_inf);
@@ -170,13 +170,13 @@ int __cdecl main()
     );
 
     // Input bin_inf
-    struct bin_inf* act_dat_in_bin_inf = get_bin_inf(0, 22*1*12288,         "./wall_oss/model_layers_0/E0_ACT/output.bin");
+    struct bin_inf* act_dat_in_bin_inf = get_bin_inf(0, 22*1*12288,         "./wall_oss/Merger/E0_ACT/output.bin");
     // Output bin_inf
     struct bin_inf* *act_dat_in_HBM_inf       = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
     struct bin_inf* *act_parameter_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group/32);
 
     // Transform data
-    HBM_act_test(cfg_act, "wall_oss_run/model_layers_0", "E0_ACT", act_dat_in_bin_inf, act_dat_in_HBM_inf, ENABLE, act_parameter_in_HBM_inf, ENABLE);
+    HBM_act_test(cfg_act, "wall_oss_run/Merger", "E0_ACT", act_dat_in_bin_inf, act_dat_in_HBM_inf, ENABLE, act_parameter_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
     // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
@@ -186,8 +186,8 @@ int __cdecl main()
     activate_step_17(user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0,          "./wall_oss/model_layers_0/E0_ACT/output.bin");
-    HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "wall_oss_run/model_layers_0", "E0_ACT", act_golden_out_bin_inf);
+    struct bin_inf* act_golden_out_bin_inf = get_bin_inf(0, 0,          "./wall_oss/Merger/E0_ACT/output.bin");
+    HBM_act_receive_and_compare(cfg_act, c2hx_device[0], "wall_oss_run/Merger", "E0_ACT", act_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(act_dat_in_bin_inf );
@@ -205,9 +205,9 @@ int __cdecl main()
     );
 
     // Input bin_inf
-    struct bin_inf* mvmbn3_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_up_proj/input.bin");
-    struct bin_inf* mvmbn3_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_up_proj/weight_int4.bin"); 
-    struct bin_inf* mvmbn3_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_up_proj/scale.bin");
+    struct bin_inf* mvmbn3_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/input.bin");
+    struct bin_inf* mvmbn3_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/weight_int4.bin"); 
+    struct bin_inf* mvmbn3_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/scale.bin");
     struct bin_inf* mvmbn3_wt_bin_inf     = get_bin_inf(0, 12288,            "./rw_data/bn_wt_1.bin");
     struct bin_inf* mvmbn3_bias_bin_inf   = get_bin_inf(0, 12288,            "./rw_data/bn_and_k_bias_0.bin");
     // Output bin_inf
@@ -216,7 +216,7 @@ int __cdecl main()
     struct bin_inf* *mvmbn3_bn_wt_and_bias_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
     // Transform data
-    HBM_mvmbn_test(cfg_mvmbn3, "wall_oss_run/model_layers_0", "E0_MVMBN3", mvmbn3_weight_bin_inf, mvmbn3_scales_bin_inf, mvmbn3_dat_in_bin_inf, mvmbn3_wt_bin_inf, mvmbn3_bias_bin_inf,
+    HBM_mvmbn_test(cfg_mvmbn3, "wall_oss_run/Merger", "E0_MVMBN3", mvmbn3_weight_bin_inf, mvmbn3_scales_bin_inf, mvmbn3_dat_in_bin_inf, mvmbn3_wt_bin_inf, mvmbn3_bias_bin_inf,
                     mvmbn3_wt_and_scale_in_HBM_inf, ENABLE, mvmbn3_dat_in_HBM_inf, ENABLE, mvmbn3_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
@@ -228,8 +228,8 @@ int __cdecl main()
     mvm_f16xi4_step_18(user_device, run_token);
 
     // Read output data from FPGA and compare
-    struct bin_inf* mvmbn3_golden_out_bin_inf = get_bin_inf(0, 22*1*4096, "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_0_up_proj/output.bin");
-    HBM_mvmbn_receive_and_compare(cfg_mvmbn3, c2hx_device[0], "wall_oss_run/model_layers_0", "E0_MVMBN3", mvmbn3_golden_out_bin_inf);
+    struct bin_inf* mvmbn3_golden_out_bin_inf = get_bin_inf(0, 22*1*4096, "./wall_oss/Merger/LINEAR_Merger_moe_experts_0_up_proj/output.bin");
+    HBM_mvmbn_receive_and_compare(cfg_mvmbn3, c2hx_device[0], "wall_oss_run/Merger", "E0_MVMBN3", mvmbn3_golden_out_bin_inf);
 
     // Malloc free
     bin_inf_malloc_free(mvmbn3_dat_in_bin_inf);
