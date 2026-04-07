@@ -4511,8 +4511,10 @@ void wall_oss_run_Mergerhbias2_load_param(HANDLE& h2cx, char* prefix) {
 }
 
 void test_load_params(HANDLE& h2cx, char* prefix) {
+  #ifdef BLOCK_EMB
   wall_oss_run_CONV3D_visual_patch_embed_projpatch_embed_wt_load_param(h2cx, prefix);
   wall_oss_run_CONV3D_visual_patch_embed_projpatch_embed_bn_load_param(h2cx, prefix);
+  #endif
   wall_oss_run_blocks_0lnweight0_load_param(h2cx, prefix);
   wall_oss_run_blocks_0qweight_load_param(h2cx, prefix);
   wall_oss_run_blocks_0qbias_load_param(h2cx, prefix);
@@ -47207,7 +47209,11 @@ void mvm_f16xi4_step_677(HANDLE& device, int token) {
 }
 
 void test_ViT(HANDLE& device, int token, int last_token) {
+  #ifdef BLOCK_EMB
   mvm_f16xi4_step_1(device, token);
+  #endif
+
+  #ifdef BLOCK_0
   norm_step_2(device, token);
   mvm_f16xi4_step_3(device, token);
   rope_step_4(device, token, last_token);
@@ -47229,6 +47235,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_20(device, token);
   mvm_f16xi4_step_21(device, token);
   elementwise_step_22(device, token);
+  #endif
+
+  #ifdef BLOCK_1
   norm_step_23(device, token);
   mvm_f16xi4_step_24(device, token);
   rope_step_25(device, token, last_token);
@@ -47250,6 +47259,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_41(device, token);
   mvm_f16xi4_step_42(device, token);
   elementwise_step_43(device, token);
+  #endif
+
+  #ifdef BLOCK_2
   norm_step_44(device, token);
   mvm_f16xi4_step_45(device, token);
   rope_step_46(device, token, last_token);
@@ -47271,6 +47283,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_62(device, token);
   mvm_f16xi4_step_63(device, token);
   elementwise_step_64(device, token);
+  #endif
+
+  #ifdef BLOCK_3
   norm_step_65(device, token);
   mvm_f16xi4_step_66(device, token);
   rope_step_67(device, token, last_token);
@@ -47292,6 +47307,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_83(device, token);
   mvm_f16xi4_step_84(device, token);
   elementwise_step_85(device, token);
+  #endif
+
+  #ifdef BLOCK_4
   norm_step_86(device, token);
   mvm_f16xi4_step_87(device, token);
   rope_step_88(device, token, last_token);
@@ -47313,6 +47331,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_104(device, token);
   mvm_f16xi4_step_105(device, token);
   elementwise_step_106(device, token);
+  #endif
+
+  #ifdef BLOCK_5
   norm_step_107(device, token);
   mvm_f16xi4_step_108(device, token);
   rope_step_109(device, token, last_token);
@@ -47334,6 +47355,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_125(device, token);
   mvm_f16xi4_step_126(device, token);
   elementwise_step_127(device, token);
+  #endif
+
+  #ifdef BLOCK_6
   norm_step_128(device, token);
   mvm_f16xi4_step_129(device, token);
   rope_step_130(device, token, last_token);
@@ -47355,6 +47379,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_146(device, token);
   mvm_f16xi4_step_147(device, token);
   elementwise_step_148(device, token);
+  #endif
+
+  #ifdef BLOCK_7
   norm_step_149(device, token);
   mvm_f16xi4_step_150(device, token);
   rope_step_151(device, token, last_token);
@@ -47376,6 +47403,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_167(device, token);
   mvm_f16xi4_step_168(device, token);
   elementwise_step_169(device, token);
+  #endif
+
+  #ifdef BLOCK_8
   norm_step_170(device, token);
   mvm_f16xi4_step_171(device, token);
   rope_step_172(device, token, last_token);
@@ -47397,6 +47427,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_188(device, token);
   mvm_f16xi4_step_189(device, token);
   elementwise_step_190(device, token);
+  #endif
+
+  #ifdef BLOCK_9
   norm_step_191(device, token);
   mvm_f16xi4_step_192(device, token);
   rope_step_193(device, token, last_token);
@@ -47418,6 +47451,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_209(device, token);
   mvm_f16xi4_step_210(device, token);
   elementwise_step_211(device, token);
+  #endif
+
+  #ifdef BLOCK_10
   norm_step_212(device, token);
   mvm_f16xi4_step_213(device, token);
   rope_step_214(device, token, last_token);
@@ -47439,6 +47475,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_230(device, token);
   mvm_f16xi4_step_231(device, token);
   elementwise_step_232(device, token);
+  #endif
+
+  #ifdef BLOCK_11
   norm_step_233(device, token);
   mvm_f16xi4_step_234(device, token);
   rope_step_235(device, token, last_token);
@@ -47460,6 +47499,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_251(device, token);
   mvm_f16xi4_step_252(device, token);
   elementwise_step_253(device, token);
+  #endif
+
+  #ifdef BLOCK_12
   norm_step_254(device, token);
   mvm_f16xi4_step_255(device, token);
   rope_step_256(device, token, last_token);
@@ -47481,6 +47523,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_272(device, token);
   mvm_f16xi4_step_273(device, token);
   elementwise_step_274(device, token);
+  #endif
+
+  #ifdef BLOCK_13
   norm_step_275(device, token);
   mvm_f16xi4_step_276(device, token);
   rope_step_277(device, token, last_token);
@@ -47502,6 +47547,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_293(device, token);
   mvm_f16xi4_step_294(device, token);
   elementwise_step_295(device, token);
+  #endif
+
+  #ifdef BLOCK_14
   norm_step_296(device, token);
   mvm_f16xi4_step_297(device, token);
   rope_step_298(device, token, last_token);
@@ -47523,6 +47571,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_314(device, token);
   mvm_f16xi4_step_315(device, token);
   elementwise_step_316(device, token);
+  #endif
+
+  #ifdef BLOCK_15
   norm_step_317(device, token);
   mvm_f16xi4_step_318(device, token);
   rope_step_319(device, token, last_token);
@@ -47544,6 +47595,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_335(device, token);
   mvm_f16xi4_step_336(device, token);
   elementwise_step_337(device, token);
+  #endif
+
+  #ifdef BLOCK_16
   norm_step_338(device, token);
   mvm_f16xi4_step_339(device, token);
   rope_step_340(device, token, last_token);
@@ -47565,6 +47619,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_356(device, token);
   mvm_f16xi4_step_357(device, token);
   elementwise_step_358(device, token);
+  #endif
+
+  #ifdef BLOCK_17
   norm_step_359(device, token);
   mvm_f16xi4_step_360(device, token);
   rope_step_361(device, token, last_token);
@@ -47586,6 +47643,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_377(device, token);
   mvm_f16xi4_step_378(device, token);
   elementwise_step_379(device, token);
+  #endif
+
+  #ifdef BLOCK_18
   norm_step_380(device, token);
   mvm_f16xi4_step_381(device, token);
   rope_step_382(device, token, last_token);
@@ -47607,6 +47667,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_398(device, token);
   mvm_f16xi4_step_399(device, token);
   elementwise_step_400(device, token);
+  #endif
+
+  #ifdef BLOCK_19
   norm_step_401(device, token);
   mvm_f16xi4_step_402(device, token);
   rope_step_403(device, token, last_token);
@@ -47628,6 +47691,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_419(device, token);
   mvm_f16xi4_step_420(device, token);
   elementwise_step_421(device, token);
+  #endif
+
+  #ifdef BLOCK_20
   norm_step_422(device, token);
   mvm_f16xi4_step_423(device, token);
   rope_step_424(device, token, last_token);
@@ -47649,6 +47715,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_440(device, token);
   mvm_f16xi4_step_441(device, token);
   elementwise_step_442(device, token);
+  #endif
+
+  #ifdef BLOCK_21
   norm_step_443(device, token);
   mvm_f16xi4_step_444(device, token);
   rope_step_445(device, token, last_token);
@@ -47670,6 +47739,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_461(device, token);
   mvm_f16xi4_step_462(device, token);
   elementwise_step_463(device, token);
+  #endif
+
+  #ifdef BLOCK_22
   norm_step_464(device, token);
   mvm_f16xi4_step_465(device, token);
   rope_step_466(device, token, last_token);
@@ -47691,6 +47763,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_482(device, token);
   mvm_f16xi4_step_483(device, token);
   elementwise_step_484(device, token);
+  #endif
+
+  #ifdef BLOCK_23
   norm_step_485(device, token);
   mvm_f16xi4_step_486(device, token);
   rope_step_487(device, token, last_token);
@@ -47712,6 +47787,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_503(device, token);
   mvm_f16xi4_step_504(device, token);
   elementwise_step_505(device, token);
+  #endif
+
+  #ifdef BLOCK_24
   norm_step_506(device, token);
   mvm_f16xi4_step_507(device, token);
   rope_step_508(device, token, last_token);
@@ -47733,6 +47811,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_524(device, token);
   mvm_f16xi4_step_525(device, token);
   elementwise_step_526(device, token);
+  #endif
+
+  #ifdef BLOCK_25
   norm_step_527(device, token);
   mvm_f16xi4_step_528(device, token);
   rope_step_529(device, token, last_token);
@@ -47754,6 +47835,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_545(device, token);
   mvm_f16xi4_step_546(device, token);
   elementwise_step_547(device, token);
+  #endif
+
+  #ifdef BLOCK_26
   norm_step_548(device, token);
   mvm_f16xi4_step_549(device, token);
   rope_step_550(device, token, last_token);
@@ -47775,6 +47859,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_566(device, token);
   mvm_f16xi4_step_567(device, token);
   elementwise_step_568(device, token);
+  #endif
+
+  #ifdef BLOCK_27
   norm_step_569(device, token);
   mvm_f16xi4_step_570(device, token);
   rope_step_571(device, token, last_token);
@@ -47796,6 +47883,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_587(device, token);
   mvm_f16xi4_step_588(device, token);
   elementwise_step_589(device, token);
+  #endif
+
+  #ifdef BLOCK_28
   norm_step_590(device, token);
   mvm_f16xi4_step_591(device, token);
   rope_step_592(device, token, last_token);
@@ -47817,6 +47907,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_608(device, token);
   mvm_f16xi4_step_609(device, token);
   elementwise_step_610(device, token);
+  #endif
+
+  #ifdef BLOCK_29
   norm_step_611(device, token);
   mvm_f16xi4_step_612(device, token);
   rope_step_613(device, token, last_token);
@@ -47838,6 +47931,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_629(device, token);
   mvm_f16xi4_step_630(device, token);
   elementwise_step_631(device, token);
+  #endif
+
+  #ifdef BLOCK_30
   norm_step_632(device, token);
   mvm_f16xi4_step_633(device, token);
   rope_step_634(device, token, last_token);
@@ -47859,6 +47955,9 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_650(device, token);
   mvm_f16xi4_step_651(device, token);
   elementwise_step_652(device, token);
+  #endif
+
+  #ifdef BLOCK_31
   norm_step_653(device, token);
   mvm_f16xi4_step_654(device, token);
   rope_step_655(device, token, last_token);
@@ -47880,10 +47979,14 @@ void test_ViT(HANDLE& device, int token, int last_token) {
   elementwise_step_671(device, token);
   mvm_f16xi4_step_672(device, token);
   elementwise_step_673(device, token);
+  #endif
+}
+
+void test_Merger_1(HANDLE& device, int token, int last_token) {
   norm_step_674(device, token);
 }
 
-void test_Merger(HANDLE& device, int token, int last_token) {
+void test_Merger_2(HANDLE& device, int token, int last_token) {
   mvm_f16xi4_step_675(device, token);
   activate_step_676(device, token);
   mvm_f16xi4_step_677(device, token);
