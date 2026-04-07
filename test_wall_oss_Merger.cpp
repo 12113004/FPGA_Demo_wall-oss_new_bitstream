@@ -43,9 +43,9 @@ using namespace std;
 
 // step switch
 
-// #define STEP_LN0
-// #define STEP_MVMBN0
-// #define STEP_ACT
+#define STEP_LN0
+#define STEP_MVMBN0
+#define STEP_ACT
 #define STEP_MVMBN2
 
 // #define STEP_LN_Outlayer
@@ -103,7 +103,7 @@ int __cdecl main()
 
     // Read output data from FPGA and compare
     struct bin_inf* ln0_golden_out_bin_inf = get_bin_inf(0, run_token*1*hidden_dim, "./wall_oss/RMSNORM_visual_merger_ln_q/output.bin");
-    HBM_ln_receive_and_compare(cfg_ln0, c2hx_device[0], "wall_oss_run/Merger", "LN1", ln0_golden_out_bin_inf);
+    HBM_ln_receive_and_compare(cfg_ln0, c2hx_device[0], "wall_oss_run/Merger", "LN1", ln0_golden_out_bin_inf, TRUE);
 
     // Malloc free
     bin_inf_malloc_free(ln0_dat_in_bin_inf);
@@ -121,9 +121,9 @@ int __cdecl main()
         /*Height*/ run_token/4, /*Hin*/ 1, /*Width_in*/ hidden_dim*4, /*Width_out*/ hidden_dim*4,
         /*DAT_IN_BASE_ADDR*/ runtime1, /*HBM00_WT_BASE_ADDR*/ hbm1, /*BN_BASE_ADDR*/ hbm2, /*DAT_OUT_BASE_ADDR*/ runtime0
     );
-
     // Input bin_inf
-    struct bin_inf* mvmbn2_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/LINEAR_visual_merger_mlp_0/input.bin");
+    // struct bin_inf* mvmbn2_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss/LINEAR_visual_merger_mlp_0/input.bin");
+    struct bin_inf* mvmbn2_dat_in_bin_inf = get_bin_inf(0, 22*1*4096,        "./wall_oss_run/Merger/LN_FPGA_out_bin/LN1_dat_out_demaped.bin");
     struct bin_inf* mvmbn2_weight_bin_inf = get_bin_inf(0, 12288*4096,       "./wall_oss/LINEAR_visual_merger_mlp_0/weight_int4.bin"); 
     struct bin_inf* mvmbn2_scales_bin_inf = get_bin_inf(0, 12288*32,         "./wall_oss/LINEAR_visual_merger_mlp_0/scale.bin");
     struct bin_inf* mvmbn2_wt_bin_inf     = get_bin_inf(0, 12288,            "./rw_data/bn_wt_1.bin");
@@ -179,7 +179,7 @@ int __cdecl main()
     HBM_act_test(cfg_act, "wall_oss_run/Merger", "GELU", act_dat_in_bin_inf, act_dat_in_HBM_inf, ENABLE, act_parameter_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], act_parameter_in_HBM_inf, group/32);
 
     // Write command to FPGA
@@ -220,7 +220,7 @@ int __cdecl main()
                     mvmbn3_wt_and_scale_in_HBM_inf, ENABLE, mvmbn3_dat_in_HBM_inf, ENABLE, mvmbn3_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_wt_and_scale_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_bn_wt_and_bias_in_HBM_inf, group);
 
