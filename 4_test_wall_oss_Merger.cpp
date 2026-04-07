@@ -43,9 +43,9 @@ using namespace std;
 
 // step switch
 
-#define STEP_LN0
-#define STEP_MVMBN0
-#define STEP_ACT
+// #define STEP_LN0
+// #define STEP_MVMBN0
+// #define STEP_ACT
 #define STEP_MVMBN2
 
 // #define STEP_LN_Outlayer
@@ -220,7 +220,7 @@ int __cdecl main()
                     mvmbn3_wt_and_scale_in_HBM_inf, ENABLE, mvmbn3_dat_in_HBM_inf, ENABLE, mvmbn3_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_dat_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_wt_and_scale_in_HBM_inf, group);
     HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn3_bn_wt_and_bias_in_HBM_inf, group);
 
