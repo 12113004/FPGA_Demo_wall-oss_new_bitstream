@@ -627,9 +627,6 @@ uint64_t runtime2 = 0x003947300;
 uint64_t runtime3 = 0x004147300;
 uint64_t runtime4 = 0x004947300;
 
-uint64_t raw_image_in = runtime0;
-
-uint64_t output = runtime4;
 
 void wall_oss_run_CONV3D_visual_patch_embed_projpatch_embed_wt_load_param(HANDLE& h2cx, char* prefix) {
   for (uint64_t port = 0; port < 32; port += 1) {
@@ -47991,3 +47988,4 @@ void test_Merger_2(HANDLE& device, int token, int last_token) {
   activate_step_676(device, token);
   mvm_f16xi4_step_677(device, token);
 }
+

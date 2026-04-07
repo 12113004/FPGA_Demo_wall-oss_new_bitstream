@@ -208,7 +208,7 @@ void set_block_end_index(void)
 // #include "./rw_cmd/wall_oss_debug_0322_2204.h"                      // 0_test_pass_version
 // #include "./rw_cmd/wall_oss_debug_0324_0005.h"                      // muti-one-pass
 // #include "./rw_cmd/wall_oss_block_all_0324_1019.h"                  // muti-ViT_block
-#include "./rw_cmd/wall_oss_block_all_0407_1505.h" 
+#include "./rw_cmd/wall_oss_block_all_0407_1844.h" 
 
 // Tests
 #include "./tests/HBM_elementwise_test.cpp"
