@@ -479,9 +479,35 @@ void generate_wt_BLOCK(char* name1, char* name2, char* name3, int index)// name1
 
 }
 
+void generate_model_norm()// name1: wall_oss；name2：wall_oss_run
+{
+    char** filename = (char**)malloc(sizeof(char*)*4);
+    for(int i=0;i<4;i++)
+        filename[i] = (char*)malloc(sizeof(char)*200);
+    sprintf(filename[0], "wall_oss_run/model_norm");
+
+    // ******************************** STEP1 - LN0 ******************************** //
+    // Parameter Config
+    struct FPGA_HBM_LN_cfg cfg_ln0 = GetFPGA_HBM_LN_cfg(
+        /*Height*/ 32, /*Hin*/ 1, /*Width_in*/ hidden_dim,
+        /*DAT_IN_BASE_ADDR*/ runtime0, /*LN_WT_BASE_ADDR*/ hbm0, /*DAT_OUT_BASE_ADDR*/ runtime1
+    );
+    // Input bin_inf
+    sprintf(filename[1], "./wall_oss/RMSNORM_model_norm/weight.bin");
+    struct bin_inf* ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/RMSNORM_model_norm/input.bin");
+    // struct bin_inf* ln0_weight_bin_inf   = get_bin_inf(0, 1*hidden_dim,         "./wall_oss/RMSNORM_model_norm/input.bin");
+    struct bin_inf* ln0_weight_bin_inf   = get_bin_inf(0, 1*hidden_dim,            filename[1]);
+    struct bin_inf* ln0_bias_bin_inf     = get_bin_inf(0, hidden_dim,              "./rw_data/bn_and_k_bias_0.bin");
+    // Output bin_inf
+    struct bin_inf* *ln0_dat_in_HBM_inf         = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *ln0_ln_wt_and_bias_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    // Transform data
+    HBM_ln_test(cfg_ln0, filename[0], "LN_Outlayer", ln0_dat_in_bin_inf, ln0_weight_bin_inf, ln0_bias_bin_inf, ln0_dat_in_HBM_inf, ENABLE, ln0_ln_wt_and_bias_HBM_inf, ENABLE);
+}
+
 int __cdecl main(int argc, char* argv[])
 {
-    int  model_part      = 0;
+    int  model_part      = 1;
     if (argc > 1) {
         model_part = atoi(argv[1]);
     }
@@ -495,10 +521,12 @@ int __cdecl main(int argc, char* argv[])
         case 0:
             generate_wt_emb_and_act();
             generate_wt_BLOCK(read_filename, write_filename, "VL_BLOCK00", 0);
+            generate_model_norm();
         break;
         // LLM ACT and EMB
         case 1:
             generate_wt_emb_and_act();
+            generate_model_norm();
         break;
         // 0
         case 2:

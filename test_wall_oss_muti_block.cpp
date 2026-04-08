@@ -14,6 +14,9 @@ using namespace std;
 
 // #define LOAD_WEIGHT
 // #define LAN_USE_GODEN
+// #define MODEL_NORM_USE_GODEN
+// #define MODEL_NORM_COMPARE
+// #define COMPARE_GODEN
 
 // #define BLOCK_EMB
 
@@ -438,9 +441,11 @@ void set_block_end_index(void)
 #define STEP_Merger_Token
 // Lanuage
 #define STEP_LN0
-#define STEP_ELEMENTWISE2
+// #define STEP_ELEMENTWISE2
 // Model Compare
-#define STEP_COMPARE
+#define BLOCK_Model_Norm
+#define STEP_SAVE_bin
+#define COMOARE_DIFF
 
 // 直接读取FP16 bin文件为uint16_t数组
 std::vector<uint16_t> readBinFile(const std::string& filepath) {
@@ -773,10 +778,10 @@ int __cdecl main()
         struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         filename[0]);
         HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "wall_oss_run/model_layers_0", "ELEMENTWISE2", elementwise2_golden_out_bin_inf);
     #else
-        sprintf(filename[0],  "./wall_oss/model_layers_%d/RMSNORM_model_layers_%d_input_layernorm/input.bin", 0, 0);
+        sprintf(filename[0],  "./wall_oss/RMSNORM_model_norm/input.bin");
         printf("%s\n", filename[0]);
         struct bin_inf* elementwise2_golden_out_bin_inf = get_bin_inf(0, 0,         filename[0]);
-        HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "wall_oss_run/model_layers_0", "ELEMENTWISE2", elementwise2_golden_out_bin_inf, TRUE);
+        HBM_elementwise_receive_and_compare(cfg_elementwise2, c2hx_device[0], "wall_oss_run/model_layers_0", "ELEMENTWISE2", elementwise2_golden_out_bin_inf);
     #endif
 
     // Malloc free
@@ -787,9 +792,57 @@ int __cdecl main()
     // HBM_bin_inf_malloc_free(elementwise2_dat_in_B_HBM_inf, group);
 #endif 
 
-#ifdef STEP_COMPARE
+#ifdef BLOCK_Model_Norm
+    // ******************************** STEP1 - LN0 ******************************** //
+    // Parameter Config
+    struct FPGA_HBM_LN_cfg model_cfg_ln0 = GetFPGA_HBM_LN_cfg(
+        /*Height*/ Lang_run_token, /*Hin*/ 1, /*Width_in*/ Lang_hidden_dim,
+        /*DAT_IN_BASE_ADDR*/ llm_runtime0, /*LN_WT_BASE_ADDR*/ llm_hbm902, /*DAT_OUT_BASE_ADDR*/ llm_runtime1
+    );
+
+    #ifdef MODEL_NORM_USE_GODEN
+    // Input bin_inf
+    struct bin_inf* model_ln0_dat_in_bin_inf   = get_bin_inf(0, run_token*1*hidden_dim,  "./wall_oss/RMSNORM_model_norm/input.bin");
+    struct bin_inf* model_ln0_weight_bin_inf   = get_bin_inf(0, 1*hidden_dim,            "./wall_oss/RMSNORM_model_norm/weight.bin");
+    struct bin_inf* model_ln0_bias_bin_inf     = get_bin_inf(0, hidden_dim,              "./rw_data/bn_and_k_bias_0.bin");
+    // Output bin_inf
+    struct bin_inf* *model_ln0_dat_in_HBM_inf         = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *model_ln0_ln_wt_and_bias_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+
+    // Transform data
+    HBM_ln_test(model_cfg_ln0, "wall_oss_run/model_norm", "LN_Outlayer", model_ln0_dat_in_bin_inf, model_ln0_weight_bin_inf, model_ln0_bias_bin_inf, model_ln0_dat_in_HBM_inf, ENABLE, model_ln0_ln_wt_and_bias_HBM_inf, ENABLE);
+
+    // Write data to FPGA
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], model_ln0_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], model_ln0_ln_wt_and_bias_HBM_inf, group);
+    #endif
+
+    // Write command to FPGA
+    model_normmodel_norm(user_device, Lang_run_token, last_token);
+
+    #ifdef MODEL_NORM_COMPARE
+    // Read output data from FPGA and compare
+    struct bin_inf* model_ln0_golden_out_bin_inf = get_bin_inf(0, run_token*1*hidden_dim, "./wall_oss/RMSNORM_model_norm/output.bin");
+    HBM_ln_receive_and_compare(model_cfg_ln0, c2hx_device[0], "wall_oss_run/model_norm", "LN_Outlayer", model_ln0_golden_out_bin_inf);
+
+    // Malloc free
+    // bin_inf_malloc_free(model_ln0_dat_in_bin_inf);
+    // bin_inf_malloc_free(model_ln0_weight_bin_inf);
+    // bin_inf_malloc_free(model_ln0_bias_bin_inf);
+    // // bin_inf_malloc_free(model_ln0_golden_out_bin_inf );
+    // HBM_bin_inf_malloc_free(model_ln0_dat_in_HBM_inf, group);
+    // HBM_bin_inf_malloc_free(model_ln0_ln_wt_and_bias_HBM_inf, group); 
+    #endif
+#endif
+
+#ifdef STEP_SAVE_bin
     // 文件路径
-    std::string compare_input_path = "./wall_oss_run/model_layers_0/ELEMENTWISE_FPGA_out_bin/ELEMENTWISE2_dat_out_demaped.bin";
+    #ifdef COMPARE_GODEN
+    std::string compare_input_path = "./wall_oss/RMSNORM_model_norm/output.bin";
+    #else
+    std::string compare_input_path = "./wall_oss_run/model_norm/LN_FPGA_out_bin/LN_Outlayer_dat_out_demaped.bin";
+    #endif
+    
     std::string compare_output_path = "./wall_oss/LINEAR_action_preprocessor_action_proj_back/input_test_time.bin";
 
     // 配置
@@ -797,7 +850,7 @@ int __cdecl main()
     int compare_hidden_size = Lang_hidden_dim;    // 隐藏层维度
     int extract_tokens = 32;   // 要提取的最后token数
 
-    std::cout << "Reading input file..." << std::endl;
+    // std::cout << "Reading input file..." << std::endl;
     std::vector<uint16_t> input_data = readBinFile(compare_input_path);
 
     // 验证数据大小
@@ -810,10 +863,10 @@ int __cdecl main()
     // reshape后形状是 (254, 2048)，后32个token即索引 222-253
     size_t start_idx = (compare_total_tokens - extract_tokens) * compare_hidden_size;  // 222 * 2048
 
-    std::cout << "Extracting last " << extract_tokens << " tokens (from index " << (compare_total_tokens - extract_tokens) << ")" << std::endl;
+    // std::cout << "Extracting last " << extract_tokens << " tokens (from index " << (compare_total_tokens - extract_tokens) << ")" << std::endl;
     std::vector<uint16_t> extracted_data(input_data.begin() + start_idx, input_data.end());
 
-    std::cout << "Extracted " << extracted_data.size() << " elements (" << extract_tokens << " x " << compare_hidden_size << ")" << std::endl;
+    // std::cout << "Extracted " << extracted_data.size() << " elements (" << extract_tokens << " x " << compare_hidden_size << ")" << std::endl;
 
     // 保存
     std::cout << std::endl;
@@ -823,46 +876,50 @@ int __cdecl main()
     // std::cout << "  Input shape: (1, " << compare_total_tokens << ", " << compare_hidden_size << ")" << std::endl;
     // std::cout << "  Output shape: (1, " << extract_tokens << ", " << compare_hidden_size << ")" << std::endl;
     // std::cout << "  Extracted tokens index: " << (compare_total_tokens - extract_tokens) << " - " << (compare_total_tokens - 1) << std::endl;
+#endif 
 
-    // 对比
+#ifdef COMOARE_DIFF
+    // ******************************** STEP21 - MVMBN4 ******************************** //
     // Parameter Config
-    struct FPGA_HBM_MVM_BN_cfg E1_cfg_mvmbn4 = GetFPGA_HBM_MVM_BN_cfg(
-        /*Height*/ 32, /*Hin*/ 1, /*Width_in*/ compare_hidden_size, /*Width_out*/ compare_hidden_size,
-        /*DAT_IN_BASE_ADDR*/ runtime0, /*HBM00_WT_BASE_ADDR*/ hbm24, /*BN_BASE_ADDR*/ hbm25, /*DAT_OUT_BASE_ADDR*/ runtime0
+    struct FPGA_HBM_MVM_BN_cfg cfg_mvmbn4 = GetFPGA_HBM_MVM_BN_cfg(
+        /*Height*/ 32, /*Hin*/ 1, /*Width_in*/ 2048, /*Width_out*/ 2048,
+        /*DAT_IN_BASE_ADDR*/ llm_runtime0, /*HBM00_WT_BASE_ADDR*/ hbm24, /*BN_BASE_ADDR*/ hbm25, /*DAT_OUT_BASE_ADDR*/ llm_runtime0
     );
 
     // Input bin_inf
-    struct bin_inf* E1_mvmbn4_dat_in_bin_inf = get_bin_inf(0, run_token*3456,  "./wall_oss/LINEAR_action_preprocessor_action_proj_back/input_test_time.bin");
-    struct bin_inf* E1_mvmbn4_weight_bin_inf = get_bin_inf(0, 3456*1280,       "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_1_down_proj/weight_int4.bin"); 
-    struct bin_inf* E1_mvmbn4_scales_bin_inf = get_bin_inf(0, 1280*27,         "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_1_down_proj/scale.bin");
-    struct bin_inf* E1_mvmbn4_wt_bin_inf     = get_bin_inf(0, 1280,            "./rw_data/bn_wt_1.bin");
-    struct bin_inf* E1_mvmbn4_bias_bin_inf   = get_bin_inf(0, 1280,            "./rw_data/bn_and_k_bias_0.bin");
+    struct bin_inf* mvmbn4_dat_in_bin_inf = get_bin_inf(0, run_token*3456,  "./wall_oss/LINEAR_action_preprocessor_action_proj_back/input_test_time.bin");
+    struct bin_inf* mvmbn4_weight_bin_inf = get_bin_inf(0, 3456*1280,       "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_1_down_proj/weight_int4.bin"); 
+    struct bin_inf* mvmbn4_scales_bin_inf = get_bin_inf(0, 1280*27,         "./wall_oss/model_layers_0/LINEAR_model_layers_0_moe_experts_1_down_proj/scale.bin");
+    struct bin_inf* mvmbn4_wt_bin_inf     = get_bin_inf(0, 1280,            "./rw_data/bn_wt_1.bin");
+    struct bin_inf* mvmbn4_bias_bin_inf   = get_bin_inf(0, 1280,            "./rw_data/bn_and_k_bias_0.bin");
     // Output bin_inf
-    struct bin_inf* *E1_mvmbn4_wt_and_scale_in_HBM_inf   = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    struct bin_inf* *E1_mvmbn4_dat_in_HBM_inf            = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
-    struct bin_inf* *E1_mvmbn4_bn_wt_and_bias_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *mvmbn4_wt_and_scale_in_HBM_inf   = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *mvmbn4_dat_in_HBM_inf            = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
+    struct bin_inf* *mvmbn4_bn_wt_and_bias_in_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
 
     // Transform data
-    HBM_mvmbn_test(E1_cfg_mvmbn4, "wall_oss_run/model_layers_0", "E1_MVMBN4", E1_mvmbn4_weight_bin_inf, E1_mvmbn4_scales_bin_inf, E1_mvmbn4_dat_in_bin_inf, E1_mvmbn4_wt_bin_inf, E1_mvmbn4_bias_bin_inf,
-                    E1_mvmbn4_wt_and_scale_in_HBM_inf, ENABLE, E1_mvmbn4_dat_in_HBM_inf, ENABLE, E1_mvmbn4_bn_wt_and_bias_in_HBM_inf, ENABLE);
+    HBM_mvmbn_test(cfg_mvmbn4, "wall_oss_run/model_norm", "MVM_COMPARE", mvmbn4_weight_bin_inf, mvmbn4_scales_bin_inf, mvmbn4_dat_in_bin_inf, mvmbn4_wt_bin_inf, mvmbn4_bias_bin_inf,
+                    mvmbn4_wt_and_scale_in_HBM_inf, ENABLE, mvmbn4_dat_in_HBM_inf, ENABLE, mvmbn4_bn_wt_and_bias_in_HBM_inf, ENABLE);
 
     // Write data to FPGA
-    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], E1_mvmbn4_dat_in_HBM_inf, group);
+    HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn4_dat_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn4_wt_and_scale_in_HBM_inf, group);
+    // HBM_bin_write_and_verify(h2cx_device[0], c2hx_device[0], mvmbn4_bn_wt_and_bias_in_HBM_inf, group);
 
     // Read output data from FPGA and compare
-    struct bin_inf* E1_mvmbn4_golden_out_bin_inf = get_bin_inf(0, 0,       "./wall_oss/LINEAR_action_preprocessor_action_proj_back/input.bin");
-    HBM_mvmbn_receive_and_compare(E1_cfg_mvmbn4, c2hx_device[0], "wall_oss_run/model_layers_0", "E1_MVMBN4", E1_mvmbn4_golden_out_bin_inf);
+    struct bin_inf* mvmbn4_golden_out_bin_inf = get_bin_inf(0, 0,       "./wall_oss/LINEAR_action_preprocessor_action_proj_back/input.bin");
+    HBM_mvmbn_receive_and_compare(cfg_mvmbn4, c2hx_device[0], "wall_oss_run/model_norm", "MVM_COMPARE", mvmbn4_golden_out_bin_inf);
 
     // Malloc free
-    bin_inf_malloc_free(E1_mvmbn4_dat_in_bin_inf);
-    bin_inf_malloc_free(E1_mvmbn4_weight_bin_inf);
-    bin_inf_malloc_free(E1_mvmbn4_scales_bin_inf);
-    bin_inf_malloc_free(E1_mvmbn4_wt_bin_inf);
-    bin_inf_malloc_free(E1_mvmbn4_bias_bin_inf);
-    bin_inf_malloc_free(E1_mvmbn4_golden_out_bin_inf );
-    HBM_bin_inf_malloc_free(E1_mvmbn4_wt_and_scale_in_HBM_inf, group);
-    HBM_bin_inf_malloc_free(E1_mvmbn4_dat_in_HBM_inf, group);
-    HBM_bin_inf_malloc_free(E1_mvmbn4_bn_wt_and_bias_in_HBM_inf, group);
+    bin_inf_malloc_free(mvmbn4_dat_in_bin_inf);
+    bin_inf_malloc_free(mvmbn4_weight_bin_inf);
+    bin_inf_malloc_free(mvmbn4_scales_bin_inf);
+    bin_inf_malloc_free(mvmbn4_wt_bin_inf);
+    bin_inf_malloc_free(mvmbn4_bias_bin_inf);
+    bin_inf_malloc_free(mvmbn4_golden_out_bin_inf );
+    HBM_bin_inf_malloc_free(mvmbn4_wt_and_scale_in_HBM_inf, group);
+    HBM_bin_inf_malloc_free(mvmbn4_dat_in_HBM_inf, group);
+    HBM_bin_inf_malloc_free(mvmbn4_bn_wt_and_bias_in_HBM_inf, group);
 #endif 
 
     cout << "test_end" << endl;
