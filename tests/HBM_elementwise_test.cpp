@@ -138,7 +138,7 @@ void HBM_elementwise_test(struct FPGA_HBM_ELEMENTWISE_cfg cfg, char* path_name, 
 	dat_in_B_HBM = NULL;
 }
 
-void HBM_elementwise_receive_and_compare(struct FPGA_HBM_ELEMENTWISE_cfg cfg, HANDLE c2hx_device, char* path_name, char* head_name, struct bin_inf* standard_out_bin_inf)
+void HBM_elementwise_receive_and_compare(struct FPGA_HBM_ELEMENTWISE_cfg cfg, HANDLE c2hx_device, char* path_name, char* head_name, struct bin_inf* standard_out_bin_inf, BOOL NO_COMPARE=false)
 {
     /***** Generate Bin and Receive Data *****/
     struct bin_inf* *dat_out_HBM_inf = (struct bin_inf**)malloc(sizeof(struct bin_inf)*group);
@@ -197,7 +197,10 @@ void HBM_elementwise_receive_and_compare(struct FPGA_HBM_ELEMENTWISE_cfg cfg, HA
     dat_out_demaped_inf = get_bin_inf( 0, Tb*cfg.Hout*cfg.Wout*cfg.CHout, write_filename2);
     
     /***** Compare Bin *****/
+    if (!NO_COMPARE)
+    {
     fp_compare_bin_with_bin(dat_out_demaped_inf->bin_data_file, dat_out_demaped_inf->bin_data_size, standard_out_bin_inf->bin_data_file);
+    }
 
     // Free malloc
     free(filepath1);
